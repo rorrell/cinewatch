@@ -5,7 +5,7 @@ const mysql = require('./dbcon.js');
 const bodyParser = require('body-parser');
 
 // constants
-const port = 3000;
+const port = 9716;
 const app = express();
 
 // set up handlebars

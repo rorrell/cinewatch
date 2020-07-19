@@ -1,0 +1,16 @@
+.flowBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.vertBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+}
+
+.centerText {
+    text-align: center;
+}

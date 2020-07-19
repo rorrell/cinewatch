@@ -1,0 +1,26 @@
+{{#if isDashboard}}
+    <p class="centerText">Hint: for now just search for one of the movies below by name (since the data is hard-coded), though this will ultimately search movies that aren't already saved.</p>
+{{else}}
+    <div class="centerText" style="margin-bottom: 25px;"><a href="/dashboard">Back to the dashboard</a></div>
+{{/if}}
+
+<div class="centerText">
+    <form method="get" action="/movies">
+
+        <label for="q">Search Movies:</label>
+        <input type="text" name="q" id="q">
+        <button type="submit">Go</button>
+    </form>
+</div>
+<br><br>
+{{#if movies}}
+    <div class="flowBox">
+        {{#each movies}}
+            <div class="vertBox centerText">
+                <a href="movie/{{movieID}}">{{name}}</a>{{releaseDate}}<br>Rating: {{averageCriticRating}}
+            </div>
+        {{/each}}
+    </div>
+{{else}}
+    <p>No movies found.</p>
+{{/if}}

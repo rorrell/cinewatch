@@ -1,0 +1,37 @@
+<script lang="javascript">
+    function back(){
+        window.history.back();
+    }
+</script>
+
+<div class="centerText" style="margin-bottom: 25px;"><a href="#" onclick="back();">Back</a></div>
+
+<div class="vertBox centerText">
+    <h1>{{name}}</h1>
+    Released: {{releaseDate}}<br>
+    Rating: {{averageCriticRating}}<br>
+    <div class="vertBox" style="width:40%; align-self: center">{{synopsis}}</div>
+    <h2>Genres</h2>
+    <div class="vertBox">
+        {{#each genres}}
+            <div>{{title}}</div>
+        {{/each}}
+    </div>
+    <h2>Actors</h2>
+    <div class="flowBox">
+        {{#each actors}}
+            <div>
+                {{firstName}} {{lastName}}<br>
+                Age: {{getAge dob}}
+            </div>
+        {{/each}}
+    </div>
+    {{#if awards}}
+        <h2>Awards</h2>
+        <div class="vertBox">
+            {{#each awards}}
+                <div>{{yearOnly dateAwarded}} - {{name}}</div>
+            {{/each}}
+        </div>
+{{/if}}
+</div>

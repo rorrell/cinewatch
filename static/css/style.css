@@ -1,3 +1,35 @@
+body {
+    background: #a8dadc; 
+}
+
+#navbar {
+    position: relative;
+    height: 80px;
+}
+
+#logo {
+    float: left;
+    padding-left: 25px;
+}
+
+nav {
+    padding-top: 25px;
+}
+
+nav a {
+    padding-left: 25px;
+    padding-right: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    float: left;
+}
+
+#about {
+    padding-top: 50px;
+    text-align: center;
+}
+
 .flowBox {
     display: flex;
     flex-direction: row;

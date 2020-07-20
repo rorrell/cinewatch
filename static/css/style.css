@@ -1,72 +1,33 @@
-/* Global */
 body {
-    background-color: #77a8c7;
+    background: #a8dadc; 
 }
 
-/* Navbar */
-.navbar {
-    background-color: #457b9d !important;
+#navbar {
+    position: relative;
+    height: 80px;
 }
 
-.nav-item {
-    padding-left: 5px;
+#logo {
+    float: left;
+    padding-left: 25px;
 }
 
-.nav-link {
-    color: black !important;
-    font-family: "Bangers", cursive;
-    font-size: 20px;
+nav {
+    padding-top: 25px;
 }
 
-/* Home */
-#intro-tag {
+nav a {
+    padding-left: 25px;
+    padding-right: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    float: left;
+}
+
+#about {
     padding-top: 50px;
-    font-family: "Bangers", cursive;
-    font-size: 50px;
     text-align: center;
-}
-
-#intro-description {
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-/* Login */
-#login-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-.form-control {
-    width: 300px;
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-/* Recovery */
-#recovery-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-#email-help {
-    color: black !important;
-}
-
-/* Register */
-#register-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-/* Dashboard */
-#dashboard {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
 }
 
 .flowBox {
@@ -83,10 +44,5 @@ body {
 }
 
 .centerText {
-    text-align: center;
-}
-
-#movie-list {
-    padding-top: 30px;
     text-align: center;
 }

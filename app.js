@@ -48,9 +48,24 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 app.get('/', function (req, res, next) {
     let context = {
-        message: "Welcome!"
+        message: "Welcome to CineWatch!"
     };
     res.render('home', context);
+});
+
+app.get('/login', function (req, res, next) {
+    let context = {
+        isLoggedIn: true
+    }
+    res.render('login', context);
+});
+
+app.get('/recovery', function (req, res, next) {
+    res.render('recovery')
+});
+
+app.get('/register', function (req, res, next) {
+    res.render('register')
 });
 
 app.get('/dashboard', function (req, res, next) {

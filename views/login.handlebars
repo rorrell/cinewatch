@@ -1,12 +1,15 @@
-<form>
-    <fieldset>
-        <legend>Login</legend>
-        <label>Username </label>
-        <input type="text" name="username"><br>
-        <label>Password </label>
-        <input type="password" name="password"><br>
-        <button type="submit">Login</button>
-    </fieldset>
-    <p>Forgot your Username or Password?</p>
-    <a href="/recovery">Click here</a>
+<form id="login-form">
+    <legend>Login</legend>
+    <div class="form-group">
+        <label for="uid-login">Username</label>
+        <input type="text" class="form-control" id="uid-login">
+    </div>
+    <div class="form-group">
+        <label for="pass-login">Password</label>
+        <input type="password" class="form-control" id="pass-login">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <br>
+    <br>
+    <p>Forgot your Username or Password? <a href="/recovery">Click here</a></p>
 </form>

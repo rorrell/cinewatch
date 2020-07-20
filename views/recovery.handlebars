@@ -1,8 +1,8 @@
-<form>
-    <fieldset>
-        <legend>Username and Password Recovery</legend>
-        <label>Email </label>
-        <input type="email" name="email"><br>
-        <button type="submit">Submit</button>
-    </fieldset>
-</form>
+<form id="recovery-form">
+    <legend>Recovery</legend>
+    <div class="form-group">
+        <label for="email-recover">Email</label>
+        <input type="email" class="form-control" id="email-recover">
+        <small id="email-help" class="form-text text-muted">Login credentials will be sent to this email</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>

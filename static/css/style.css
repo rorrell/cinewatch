@@ -20,6 +20,12 @@ table {
     text-align: center;
 }
 
+a {
+    color: darkred;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 /* Navbar */
 .navbar {
     background-color: #457b9d !important;
@@ -33,6 +39,7 @@ table {
     color: black !important;
     font-family: "Bangers", cursive;
     font-size: 20px;
+    text-decoration: none;
 }
 
 /* Home */

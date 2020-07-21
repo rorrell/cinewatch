@@ -1,3 +1,4 @@
+<div id="dashboard">
 {{#if isDashboard}}
     <p class="centerText">Hint: for now just search for one of the movies below by name (since the data is hard-coded), though this will ultimately search movies that aren't already saved.</p>
 {{else}}
@@ -5,11 +6,14 @@
 {{/if}}
 
 <div class="centerText">
+    <legend>Search movies</legend>
     <form method="get" action="/movies">
-
-        <label for="q">Search Movies:</label>
-        <input type="text" name="q" id="q">
-        <button type="submit">Go</button>
+        <div class="form-group">
+            <label for="q">Movie name</label>
+            <input type="text" class="form-control" name="q" id="q">
+            <br>
+            <button type="submit" class="btn btn-primary">Go</button>
+        </div>
     </form>
 </div>
 <br><br>
@@ -24,3 +28,8 @@
 {{else}}
     <p>No movies found.</p>
 {{/if}}
+</div>
+
+<div id="movie-list">
+    <legend>Movie list</legend>
+</div>

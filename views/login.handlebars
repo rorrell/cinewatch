@@ -1,7 +1,7 @@
 <form id="login-form">
     <legend>Login</legend>
     <div class="form-group">
-        <label for="uid-login">Username</label>
+        <label for="uid-login">Email</label>
         <input type="text" class="form-control" id="uid-login">
     </div>
     <div class="form-group">
@@ -11,5 +11,23 @@
     <button type="submit" class="btn btn-primary">Submit</button>
     <br>
     <br>
-    <p>Forgot your Username or Password? <a href="/recovery">Click here</a></p>
-</form>
+    <p>Forgot your Password? <a href="/recovery">Click here</a></p>
+
+<br>
+<table>
+    <caption>Information entered above will be cross-referenced with data in 'Users' table:</caption>
+    <thead>
+        <tr>
+            <th>userID</th>
+            <th>email</th>
+            <th>password</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>alex355</td>
+            <td>12345</td>
+        </tr>
+    </tbody>
+</table>

@@ -1,10 +1,11 @@
 <div id="dashboard">
 {{#if isDashboard}}
-    <p class="centerText">Hint: for now just search for one of the movies below by name (since the data is hard-coded), though this will ultimately search movies that aren't already saved.</p>
+    <p>This is where the user will see the movies they want to see.  It is currently just hard-coded data, but it will make use of the Movies and UsersMovies tables.  The search works, but right now the Remove button doesn't.</p>
+    <p class="centerText">Hint: try searching for 'p', 'peak', or 'park'.</p>
 {{else}}
+    <p>This is where the user will see search results of movies they can add to their saved list.  It is currently just hard-coded data, but it will make use of the Movies and UsersMovies tables.  The search works, but right now the Add button doesn't.</p>
     <div class="centerText" style="margin-bottom: 25px;"><a href="/dashboard">Back to the dashboard</a></div>
 {{/if}}
-
 <div class="centerText">
     <legend>Search movies</legend>
     <form method="get" action="/movies">
@@ -21,6 +22,15 @@
     <div class="flowBox">
         {{#each movies}}
             <div class="vertBox centerText">
+                <form>
+                    <button type="submit">
+                        {{#if ../isDashboard}}
+                            Remove
+                        {{else}}
+                            Add
+                        {{/if}}
+                    </button>
+                </form>
                 <a href="movie/{{movieID}}">{{name}}</a>{{releaseDate}}<br>Rating: {{averageCriticRating}}
             </div>
         {{/each}}

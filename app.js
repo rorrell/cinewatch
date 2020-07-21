@@ -70,7 +70,7 @@ app.get('/register', function (req, res, next) {
 
 app.get('/dashboard', function (req, res, next) {
     let context = {
-        movies: movies,
+        movies: movies.filter(mov => mov.movieID == 1),
         isDashboard: true
     };
     res.render('dashboard', context);
@@ -82,7 +82,7 @@ app.get('/movie/:id', function (req, res, next) {
 });
 
 app.get('/movies', function (req, res, next) {
-    let results = movies.filter(mov => mov.name.toLowerCase().includes(req.query.q.toLowerCase()));
+    let results = movies.filter(mov => mov.name.toLowerCase().includes(req.query.q.toLowerCase()) && mov.movieID > 1);
     let context = {
         movies: results,
         isDashboard: false

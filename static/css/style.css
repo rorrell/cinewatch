@@ -3,6 +3,23 @@ body {
     background-color: #77a8c7;
 }
 
+table, th, td {
+    border: 1px solid black;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+caption {
+    color: black;
+    caption-side: top;
+    text-align: center;
+}
+
+table {
+    text-align: center;
+}
+
 /* Navbar */
 .navbar {
     background-color: #457b9d !important;

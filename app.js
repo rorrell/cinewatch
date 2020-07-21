@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const movies = require('./movies')
 
 // constants
-const port = 9716;
+const port = process.env.PORT || 9716;
 const app = express();
 
 // set up handlebars

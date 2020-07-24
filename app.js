@@ -1,3 +1,4 @@
+  
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
@@ -57,41 +58,43 @@ app.get('/', function (req, res, next) {
     res.render('home', context);
 });
 
-app.get('/login', function (req, res, next) {
+app.get('/movies', function (req, res, next) {
     let context = {
         isLoggedIn: true
     }
-    res.render('login', context);
+    res.render('movies', context);
 });
 
-app.get('/recovery', function (req, res, next) {
-    res.render('recovery')
+app.get('/theatres', function (req, res, next) {
+    res.render('theatres')
 });
 
-app.get('/register', function (req, res, next) {
-    res.render('register')
+app.get('/genres', function (req, res, next) {
+    res.render('genres');
 });
 
-app.get('/dashboard', function (req, res, next) {
-    let context = {
-        movies: movies.filter(mov => mov.movieID == 1),
-        isDashboard: true
-    };
-    res.render('dashboard', context);
+app.get('/actors', function (req, res, next) {
+    res.render('actors');
 });
 
-app.get('/movie/:id', function (req, res, next) {
-    let context = movies.find(mov => mov.movieID.toString() === req.params.id);
-    res.render('movie', context);
+app.get('/awards', function (req, res, next) {
+    res.render('awards')
 });
 
-app.get('/movies', function (req, res, next) {
-    let results = movies.filter(mov => mov.name.toLowerCase().includes(req.query.q.toLowerCase()) && mov.movieID > 1);
-    let context = {
-        movies: results,
-        isDashboard: false
-    };
-    res.render('dashboard', context);
+app.get('/theatresmovies', function (req, res, next) {
+    res.render('theatresmovies')
+});
+
+app.get('/genresmovies', function (req, res, next) {
+    res.render('genresmovies')
+});
+
+app.get('/actorsmovies', function (req, res, next) {
+    res.render('actorsmovies')
+});
+
+app.get('/awardsmovies', function (req, res, next) {
+    res.render('awardsmovies')
 });
 
 // start app

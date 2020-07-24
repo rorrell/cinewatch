@@ -20,15 +20,10 @@ table {
     text-align: center;
 }
 
-a {
-    color: darkred;
-    font-weight: bold;
-    text-decoration: underline;
-}
-
 /* Navbar */
 .navbar {
     background-color: #457b9d !important;
+    width: 100%;
 }
 
 .nav-item {
@@ -39,78 +34,28 @@ a {
     color: black !important;
     font-family: "Bangers", cursive;
     font-size: 20px;
-    text-decoration: none;
 }
 
 /* Home */
 #intro-tag {
-    padding-top: 50px;
+    padding-top: 80px;
     font-family: "Bangers", cursive;
-    font-size: 50px;
+    font-size: 60px;
     text-align: center;
+    color: black;
 }
 
 #intro-description {
     font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
     text-align: center;
+    margin: auto;
+    color: black;
+    max-width: 850px;
+    min-width: 300px;
 }
 
-/* Login */
-#login-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-.form-control {
-    width: 300px;
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-/* Recovery */
-#recovery-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-#email-help {
-    color: black !important;
-}
-
-/* Register */
-#register-form {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-    text-align: center;
-}
-
-/* Dashboard */
-#dashboard {
-    padding-top: 50px;
-    font-family: 'Open Sans', sans-serif;
-}
-
-.flowBox {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.vertBox {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-}
-
-.centerText {
-    text-align: center;
-}
-
-#movie-list {
-    padding-top: 30px;
-    text-align: center;
+#citation {
+    font-size: 12px;
 }

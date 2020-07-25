@@ -4,10 +4,15 @@ body {
 }
 
 table, th, td {
-    border: 1px solid black;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    font-size: 12px;
+}
+
+.update-button {
+    background-color: none !important;
+    border: none !important;
 }
 
 caption {
@@ -16,11 +21,44 @@ caption {
     text-align: center;
 }
 
-table {
+.col-md {
+    padding-top: 50px;
+}
+
+.col-lg {
+    padding-top: 50px;
+}
+
+.form-legend, .table-legend {
+    font-family: "Bangers", cursive;
+    text-align: center;
+    color: black;
+}
+
+.form-group {
     text-align: center;
 }
 
-/* Navbar */
+.form-control {
+    display: block;
+    margin: auto;
+    width: 300px;
+}
+
+.form-submit {
+    display: block;
+    margin: auto;
+}
+
+input {
+    text-align: center;
+}
+
+input:focus::placeholder {
+    color: transparent;
+}
+
+/* navbar */
 .navbar {
     background-color: #457b9d !important;
     width: 100%;
@@ -36,7 +74,7 @@ table {
     font-size: 20px;
 }
 
-/* Home */
+/* home */
 #intro-tag {
     padding-top: 80px;
     font-family: "Bangers", cursive;
@@ -58,4 +96,10 @@ table {
 
 #citation {
     font-size: 12px;
+}
+
+/* theatres */
+
+#input-state {
+    width: 50px;
 }

@@ -76,22 +76,6 @@ app.get('/awards', function (req, res, next) {
     res.render('awards')
 });
 
-app.get('/theatresmovies', function (req, res, next) {
-    res.render('theatresmovies')
-});
-
-app.get('/genresmovies', function (req, res, next) {
-    res.render('genresmovies')
-});
-
-app.get('/actorsmovies', function (req, res, next) {
-    res.render('actorsmovies')
-});
-
-app.get('/awardsmovies', function (req, res, next) {
-    res.render('awardsmovies')
-});
-
 // start app
 app.listen(port, function(){
     console.log('Express started on port ' + port + '; press Ctrl-C to terminate.')

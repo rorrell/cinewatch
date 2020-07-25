@@ -1,1 +1,55 @@
-data from Movies table go here.
+<div class="container">
+    <div class="row">
+        <div class="col-md">
+            <form>
+                <h1 class="form-legend">Add new movie</h1>
+                <div class="form-group">
+                    <label for="">name</label>
+                    <input type="text" class="form-control" id="" placeholder="Titanic">
+                </div>
+                <div class="form-group">
+                    <label for="">releaseDate</label>
+                    <input type="text" class="form-control" id="" placeholder="1997">
+                </div>
+                <div class="form-group">
+                    <label for="">averageCriticRating</label>
+                    <input type="text" class="form-control" id="" placeholder="88">
+                </div>
+                <div class="form-group">
+                    <label for="">synopsis</label>
+                    <input type="text" class="form-control" id="" placeholder="An epic romance and disaster film directed...">
+                </div>
+                <button type="button" class="btn btn-primary form-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg">
+            <table class="table">
+                <h1 class="table-legend">Movies</h1>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">movieID</th>
+                        <th scope="col">name</th>
+                        <th scope="col">releaseDate</th>
+                        <th scope="col">averageCriticRating</th>
+                        <th scope="col">synopsis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-primary">
+                        <td>10</td>
+                        <td>Die Hard</td>
+                        <td>1988</td>
+                        <td>93</td>
+                        <td>New York City policeman John...</td>
+                        <td><button type="submit" class="btn btn-success update-button">Update</button></td>
+                        <td><button type="submit" class="btn btn-danger update-button">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

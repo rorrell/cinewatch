@@ -7,7 +7,6 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 const mysql = require('./dbcon.js');
 const bodyParser = require('body-parser');
-const movies = require('./movies')
 
 // constants
 const port = process.env.PORT || 9716;
@@ -57,41 +56,24 @@ app.get('/', function (req, res, next) {
     res.render('home', context);
 });
 
-app.get('/login', function (req, res, next) {
-    let context = {
-        isLoggedIn: true
-    }
-    res.render('login', context);
-});
-
-app.get('/recovery', function (req, res, next) {
-    res.render('recovery')
-});
-
-app.get('/register', function (req, res, next) {
-    res.render('register')
-});
-
-app.get('/dashboard', function (req, res, next) {
-    let context = {
-        movies: movies.filter(mov => mov.movieID == 1),
-        isDashboard: true
-    };
-    res.render('dashboard', context);
-});
-
-app.get('/movie/:id', function (req, res, next) {
-    let context = movies.find(mov => mov.movieID.toString() === req.params.id);
-    res.render('movie', context);
-});
-
 app.get('/movies', function (req, res, next) {
-    let results = movies.filter(mov => mov.name.toLowerCase().includes(req.query.q.toLowerCase()) && mov.movieID > 1);
-    let context = {
-        movies: results,
-        isDashboard: false
-    };
-    res.render('dashboard', context);
+    res.render('movies');
+});
+
+app.get('/theatres', function (req, res, next) {
+    res.render('theatres')
+});
+
+app.get('/genres', function (req, res, next) {
+    res.render('genres');
+});
+
+app.get('/actors', function (req, res, next) {
+    res.render('actors');
+});
+
+app.get('/awards', function (req, res, next) {
+    res.render('awards')
 });
 
 // start app

@@ -65,11 +65,29 @@ app.get('/theatres', function (req, res, next) {
 });
 
 app.get('/genres', function (req, res, next) {
-    res.render('genres');
+    mysql.pool.query("SELECT genreID, title FROM Genres ORDER BY title ASC", [], (err, rows) => {
+       if(err) {
+           throw(err);
+       } else {
+           let context = {
+               genres: rows
+           };
+           res.render('genres', context);
+       }
+    });
 });
 
 app.get('/actors', function (req, res, next) {
-    res.render('actors');
+    mysql.pool.query("SELECT actorID, firstName, lastName, dob FROM Actors ORDER BY lastName ASC", [], (err, rows) => {
+        if(err) {
+            throw(err);
+        } else {
+            let context = {
+                actors: rows
+            };
+            res.render('actors', context);
+        }
+    });
 });
 
 app.get('/awards', function (req, res, next) {

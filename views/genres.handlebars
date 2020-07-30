@@ -1,57 +1,71 @@
 Contains functionalities to view and manipulate data in the Genres table and
 the GenresMovies table.
 <script type="text/javascript">
-    var newGenreId = 100;
-
     function updateGenre(genreID) {
         var row = document.getElementById("row" + genreID);
         var text = row.childNodes[3].firstChild;
         var textBox = document.createElement("INPUT");
         textBox.setAttribute("type", "text");
         textBox.setAttribute("id", "text" + genreID);
+        textBox.setAttribute("name", "title");
         textBox.setAttribute("value", text.textContent);
         row.childNodes[3].replaceChild(textBox, text);
-        var button = row.childNodes[5].childNodes[1].childNodes[3]
+        var button = row.childNodes[5].childNodes[1].childNodes[3];
         button.innerText = "Save";
-        button.onclick = function(){ saveGenre(genreID) };
+        button.onclick = function(){ saveGenre(genreID, false) };
     }
 
-    function saveGenre(genreID) {
+    function saveGenre(genreID, isNew) {
         var row = document.getElementById("row" + genreID);
         var textBox = row.childNodes[3].firstChild;
         var text = new Text(textBox.value);
-        console.log(text);
-        row.childNodes[3].replaceChild(text, textBox);
-        var button = row.childNodes[5].childNodes[1].childNodes[3]
-        button.innerText = "Update";
-        button.onclick = function(){ updateGenre(genreID) };
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let res = JSON.parse(req.responseText);
+                row.id = "row" + res.id;
+                row.childNodes[3].replaceChild(text, textBox);
+                var button = row.childNodes[5].childNodes[1].childNodes[3];
+                button.innerText = "Update";
+                button.onclick = function(){ updateGenre(res.id) };
+            }
+        };
+        var url = isNew ? "/genres" : "/genres/update/" + genreID;
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        var body = isNew ? "textNew=" + text.data : "title=" + text.data;
+        req.send(body);
     }
 
     function deleteGenre(genreID) {
-        var row = document.getElementById("row" + genreID);
-        row.remove();
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var row = document.getElementById("row" + genreID);
+                row.remove();
+            }
+        };
+        req.open("GET", "/genres/delete/" + genreID, true);
+        req.send();
     }
 
     function addGenre() {
         var table = document.getElementById("genreTable");
         var newRow = table.childNodes[3].childNodes[0].cloneNode(true);
-        var genreID = newGenreId;
-        newGenreId++;
-        newRow.id = "row" + genreID;
-        console.log(newRow.childNodes[1].firstChild);
-        newRow.childNodes[1].firstChild.replaceWith(new Text(genreID.toString()));
-        console.log(newRow.childNodes[1].firstChild);
+        var form = newRow.childNodes[1];
+        form.setAttribute("id", "formNew");
+        newRow.id = "rowNew";
         var text = newRow.childNodes[3].firstChild;
         var textBox = document.createElement("INPUT");
         textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", "text" + genreID);
+        textBox.setAttribute("id", "textNew");
+        textBox.setAttribute("name", "title");
         textBox.setAttribute("value", "");
         newRow.childNodes[3].replaceChild(textBox, text);
-        var button = newRow.childNodes[5].childNodes[1].childNodes[3]
+        var button = newRow.childNodes[5].childNodes[1].childNodes[3];
         button.innerText = "Save";
-        button.onclick = function(){ saveGenre(genreID) };
+        button.onclick = function(){ saveGenre("New", true) };
         table.appendChild(newRow);
-
     }
 </script>
 <div class="row">
@@ -60,21 +74,21 @@ the GenresMovies table.
         <table id="genreTable" class="table table-light table-striped">
             <thead class="thead-dark">
             <tr>
-                <th>#</th>
                 <th>Title</th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
             {{#each genres}}
                 <tr id="row{{genreID}}">
-                    <td>{{genreID}}</td>
+                    <form id="form{{genreID}}" method="post" action="/genre/{{genreID}}">
                     <td>{{title}}</td>
                     <td>
                         <div class="d-flex flex-row-reverse">
-                            <button class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>
-                            <button class="btn btn-primary mx-2" onclick="updateGenre({{genreID}})">Update</button>
+                            <button type="button" class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>
+                            <button type="button" class="btn btn-primary mx-2" onclick="updateGenre({{genreID}})">Update</button>
                         </div>
                     </td>
+                    </form>
                 </tr>
             {{/each}}
         </table>

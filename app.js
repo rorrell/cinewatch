@@ -77,6 +77,36 @@ app.get('/genres', function (req, res, next) {
     });
 });
 
+app.post('/genres', function (req, res, next) {
+    mysql.pool.query("CALL InsertGenre(?)", [req.body.textNew], (error, rows) => {
+        if(error) {
+            throw(error);
+        } else {
+           res.send({ id: rows[0][0]['id'] });
+        }
+    })
+});
+
+app.get('/genres/delete/:id', function(req, res, next) {
+   mysql.pool.query("DELETE FROM Genres WHERE genreID = ?", [req.params.id], (error, rows) => {
+       if(error) {
+           throw(error);
+       } else {
+           res.send({ result: true });
+       }
+   });
+});
+
+app.post('/genres/update/:id', function(req, res, next) {
+   mysql.pool.query("UPDATE Genres SET title = ? WHERE genreID = ?", [req.body.title, req.params.id], (error, rows) => {
+      if(error) {
+          throw(error);
+      } else {
+          res.send({ result: true });
+      }
+   });
+});
+
 app.get('/actors', function (req, res, next) {
     mysql.pool.query("SELECT actorID, firstName, lastName, dob FROM Actors ORDER BY lastName ASC", [], (err, rows) => {
         if(err) {

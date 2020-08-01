@@ -2,46 +2,46 @@ Contains functionalities to view and manipulate data in the Genres table and
 the GenresMovies table.
 <script type="text/javascript">
     function updateGenre(genreID) {
-        var row = document.getElementById("row" + genreID);
-        var text = row.childNodes[3].firstChild;
-        var textBox = document.createElement("INPUT");
-        textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", "text" + genreID);
-        textBox.setAttribute("name", "title");
-        textBox.setAttribute("value", text.textContent);
-        row.childNodes[3].replaceChild(textBox, text);
-        var button = row.childNodes[5].childNodes[1].childNodes[3];
-        button.innerText = "Save";
-        button.onclick = function(){ saveGenre(genreID, false) };
+        let text = $("#row" + genreID + " > td:first");
+        text.replaceWith('<td><input type="text" id="text' + genreID + '" name="title" value="' + text.text() + '" /></td>');
+        let button = $("#row" + genreID + " > td:eq(1) > div:first > button:eq(1)");
+        button.text("Save");
+        button.attr('onclick', 'saveGenre(' + genreID + ', false)');
     }
 
     function saveGenre(genreID, isNew) {
-        var row = document.getElementById("row" + genreID);
-        var textBox = row.childNodes[3].firstChild;
-        var text = new Text(textBox.value);
+        let row = $("#row" + genreID);
+        let textBox = $("#row" + genreID + " > td:first > input:first");
+        let text = textBox.val();
         var req = new XMLHttpRequest();
         req.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState === 4 && this.status === 200) {
                 let res = JSON.parse(req.responseText);
-                row.id = "row" + res.id;
-                row.childNodes[3].replaceChild(text, textBox);
-                var button = row.childNodes[5].childNodes[1].childNodes[3];
-                button.innerText = "Update";
-                button.onclick = function(){ updateGenre(res.id) };
+                if (isNew) {
+                    let button2 = $("#row" + genreID + " > td:eq(1) > div:first > button:first");
+                    genreID = res.id;
+                    button2.attr('onclick', 'deleteGenre(' + genreID + ')');
+                }
+                row.attr('id', 'row' + genreID);
+                textBox.replaceWith(text);
+                let button = $("#row" + genreID + " > td:eq(1) > div:first > button:eq(1)");
+                button.text("Update");
+                button.attr('onclick', 'updateGenre(' + genreID + ')');
             }
         };
-        var url = isNew ? "/genres" : "/genres/update/" + genreID;
+        let url = isNew ? "/genres" : "/genres/update/" + genreID;
         req.open("POST", url, true);
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        var body = isNew ? "textNew=" + text.data : "title=" + text.data;
+        let body = isNew ? "textNew=" + text : "title=" + text;
+        console.log(body);
         req.send(body);
     }
 
     function deleteGenre(genreID) {
-        var req = new XMLHttpRequest();
+        let req = new XMLHttpRequest();
         req.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var row = document.getElementById("row" + genreID);
+            if (this.readyState === 4 && this.status === 200) {
+                let row = $("#row" + genreID);
                 row.remove();
             }
         };
@@ -50,22 +50,16 @@ the GenresMovies table.
     }
 
     function addGenre() {
-        var table = document.getElementById("genreTable");
-        var newRow = table.childNodes[3].childNodes[0].cloneNode(true);
-        var form = newRow.childNodes[1];
-        form.setAttribute("id", "formNew");
-        newRow.id = "rowNew";
-        var text = newRow.childNodes[3].firstChild;
-        var textBox = document.createElement("INPUT");
-        textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", "textNew");
-        textBox.setAttribute("name", "title");
-        textBox.setAttribute("value", "");
-        newRow.childNodes[3].replaceChild(textBox, text);
-        var button = newRow.childNodes[5].childNodes[1].childNodes[3];
-        button.innerText = "Save";
-        button.onclick = function(){ saveGenre("New", true) };
-        table.appendChild(newRow);
+        let newRow = $("#genreTable > tbody:first > tr:first").clone(true);
+        newRow.attr('id', 'rowNew');
+        $('#genreTable > tbody:first > tr:last').after(newRow);
+        let button = $("#rowNew > td:eq(1) > div:first > button:eq(1)");
+        button.text("Save");
+        button.attr('onclick', 'saveGenre("New", true)');
+        let text = $("#rowNew > td:first");
+        text.replaceWith('<td><input type="text" id="textNew" name="title" value=""></td>');
+        let form = $("#rowNew > form:first");
+        form.attr('id', 'formNew');
     }
 </script>
 <div class="row">

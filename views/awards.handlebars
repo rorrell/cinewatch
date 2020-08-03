@@ -41,7 +41,7 @@
                 </thead>
                 <tbody>
                 {{#each awards}}
-                    <tr id="{{awardID}}">
+                    <tr id="row{{awardID}}">
                         <td>{{awardID}}</td>
                         <td>{{company}}</td>
                         <td>{{category}}</td>
@@ -49,7 +49,7 @@
                         <td style="display:none;">{{movieID}}</td>
                         <td>
                             <div class="d-flex flex-row-reverse">
-                                <button class="btn btn-secondary" onclick="deleteActor({{actorID}})">Delete</button>
+                                <button class="btn btn-secondary" onclick="deleteAward({{awardID}})">Delete</button>
                                 <button class="btn btn-primary mx-2" onclick="updateActor({{actorID}})">Update</button>
                             </div>
                         </td>
@@ -113,6 +113,26 @@
                 let data = JSON.parse(req.responseText);
                 console.log(data);
                 add(data);
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
+    }
+
+    function deleteAward(ID) {
+        var row = document.getElementById("row" + ID);
+        let req = new XMLHttpRequest();
+        let payload = {awardID:null};
+        payload.awardID = ID;
+        req.open("DELETE", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                console.log(data);
+                row.remove();
             } else {
                 console.log("Error in network request: " + req.statusText);
             }

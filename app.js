@@ -102,7 +102,6 @@ const getAllData = (res) => {
         res.json({rows: rows});
     })
 }
-
 app.get('/awards', function (req, res, next) {
     mysql.pool.query("SELECT awardID, company, category, yearAwarded, movieID FROM Awards ORDER BY awardID ASC", [], (err, rows) => {
         mysql.pool.query("SELECT movieID, name, DATE_FORMAT(releaseDate, '%b %e %Y') AS releaseDate FROM Movies ORDER BY name ASC", [], (err, rows2) => {
@@ -127,6 +126,18 @@ app.post('/awards', function (req, res, next) {
             return;
         }
         getAllData(res);
+    });
+});
+app.delete('/awards', function (req, res, next) {
+    var context = {};
+    var {awardID} = req.body;
+    mysql.pool.query("DELETE FROM Awards WHERE awardID=?", [awardID], function (err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        context.results = "Deleted row";
+        res.send(context);
     });
 });
 

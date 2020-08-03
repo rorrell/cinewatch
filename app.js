@@ -7,6 +7,7 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 const mysql = require('./dbcon.js');
 const bodyParser = require('body-parser');
+const moment = require('moment');
 
 // constants
 const port = process.env.PORT || 9716;
@@ -18,24 +19,20 @@ var hbs = exphbs.create({
     defaultLayout:'main',
     partialsDir: path.join(__dirname, 'views/partials'),
     helpers: {
+        moment: require('helper-moment'),
         getAge: function (dobString) {
             if(dobString == null) {
                 return "Unknown";
             }
-            let currentDate = new Date();
-            //clear the time from the current date so it's not considered in calculations
-            currentDate.setHours(0, 0, 0, 0);
-            let dob = new Date(dobString);
-            let years = currentDate.getFullYear() - dob.getFullYear();
-            if((currentDate.getMonth() < dob.getMonth()) || (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())) {
-                years -= 1;
-            }
-            return years;
+            let dob = moment(dobString);
+            let now = moment().local();
+            let age = moment.duration(now.diff(dob));
+            return Math.floor(age.asYears());
         },
         yearOnly: function (dateString) {
-            let date = new Date(dateString);
-            date.setHours(0, 0, 0, 0);
-            return date.getFullYear();
+            let date = moment(dateString).local();
+            date.set({hours:0,minutes:0,seconds:0});
+            return date.year();
         }
     }
 });
@@ -116,6 +113,36 @@ app.get('/actors', function (req, res, next) {
                 actors: rows
             };
             res.render('actors', context);
+        }
+    });
+});
+
+app.post('/actors', function (req, res, next) {
+    mysql.pool.query("CALL InsertActor(?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.dob], (error, rows) => {
+        if(error) {
+            throw(error);
+        } else {
+            res.send({ id: rows[0][0]['id'] });
+        }
+    })
+});
+
+app.get('/actors/delete/:id', function(req, res, next) {
+    mysql.pool.query("DELETE FROM Actors WHERE actorID = ?", [req.params.id], (error, rows) => {
+        if(error) {
+            throw(error);
+        } else {
+            res.send({ result: true });
+        }
+    });
+});
+
+app.post('/actors/update/:id', function(req, res, next) {
+    mysql.pool.query("UPDATE Actors SET firstName = ?, lastName = ?, dob = ? WHERE actorID = ?", [req.body.firstName, req.body.lastName, req.body.dob, req.params.id], (error, rows) => {
+        if(error) {
+            throw(error);
+        } else {
+            res.send({ result: true });
         }
     });
 });

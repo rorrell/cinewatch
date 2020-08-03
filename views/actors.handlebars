@@ -1,67 +1,106 @@
 Contains functionalities to view and manipulate data in the Actors table and
 the ActorsMovies table.
+<script src="/js/moment.min.js"></script>
 <script type="text/javascript">
-    var newActorId = 100;
-
-    function updateActor(actorID) {
-        var row = document.getElementById("row" + actorID);
-        var children = [3, 5, 7];
-        var id_endings = ['a', 'b', 'c'];
-        for (var index in children) {
-            console.log(index);
-            var text = row.childNodes[children[index]].firstChild;
-            var textBox = document.createElement("INPUT");
-            textBox.setAttribute("type", "text");
-            textBox.setAttribute("id", "text" + actorID + id_endings[index]);
-            textBox.setAttribute("value", text.textContent);
-            row.childNodes[children[index]].replaceChild(textBox, text);
+    function getAge(dobString){
+        if(dobString == null) {
+            return "Unknown";
         }
-        var button = row.childNodes[9].childNodes[1].childNodes[3];
-        button.innerText = "Save";
-        button.onclick = function(){ saveActor(actorID) };
+        let dob = moment(dobString);
+        let now = moment().local();
+        let age = moment.duration(now.diff(dob));
+        return Math.floor(age.asYears());
+    }
+    function updateActor(actorID) {
+        let values = { firstName: null, lastName: null, dob: null };
+        let index = 0;
+        $.each(values, function(key, value) {
+            let text = $('#row' + actorID + ' > td:eq(' + index + ')');
+            if(key === 'dob') {
+                let hidden = $('#row' + actorID + ' > td:last > div:first > input:first');
+                text.replaceWith('<td><input type="date" id="text' + actorID + '" name="' + key + '" value="' + hidden.val() + '" data-toggle="tooltip" title="DOB" /></td>');
+            } else {
+                text.replaceWith('<td><input type="text" id="text' + actorID + '" name="' + key + '" value="' + text.text() + '" /></td>');
+            }
+            index++;
+        });
+        let button = $('#row' + actorID + ' > td:last > div:first > button:last');
+        button.text('Save');
+        button.attr('onclick', 'saveActor(' + actorID + ', false)');
     }
 
-    function saveActor(actorID) {
-        var row = document.getElementById("row" + actorID);
-        var children = [3, 5, 7];
-        for (var child of children) {
-            var textBox = row.childNodes[child].firstChild;
-            var text = new Text(textBox.value);
-            console.log(text);
-            row.childNodes[child].replaceChild(text, textBox);
-        }
-        var button = row.childNodes[9].childNodes[1].childNodes[3];
-        button.innerText = "Update";
-        button.onclick = function(){ updateActor(actorID) };
+    function saveActor(actorID, isNew) {
+        let row = $("#row" + actorID);
+        let values = { firstName: null, lastName: null, dob: null };
+        let index = 0;
+        let body = "";
+        $.each(values, function(key, value) {
+           let textBox = $('#row' + actorID + ' > td:eq(' + index + ') > input:first');
+           values[key] = textBox.val();
+           body += key + "=" + textBox.val() + "&";
+           index++;
+        });
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+          if (this.readyState === 4 && this.status === 200) {
+              let res = JSON.parse(req.responseText);
+              if(isNew) {
+                  let button2 = $('#row' + actorID + ' > td:last > div:first > button:first');
+                  actorID = res.id;
+                  button2.attr('onclick', 'deleteActor(' + actorID + ')');
+              }
+              row.attr('id', 'row' + actorID);
+              let index = 0;
+              $.each(values, function(key, value) {
+                  let textBox = $('#row' + actorID + ' > td:eq(' + index + ') > input:first');
+                  if(key === 'dob') {
+                      textBox.replaceWith(getAge(value));
+                      let hidden = $('#row' + actorID + ' > td:last > div:first > input:first');
+                      hidden.val(value);
+                  }
+                  textBox.replaceWith(value);
+                  index++;
+              });
+              let button = $('#row' + actorID + ' > td:last > div:first > button:last');
+              button.text('Update');
+              button.attr('onclick', 'updateActor(' + actorID + ')');
+          }
+        };
+        let url = isNew ? "/actors" : "/actors/update/" + actorID;
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(body.slice(0,body.length-1));
     }
 
     function deleteActor(actorID) {
-        var row = document.getElementById("row" + actorID);
-        row.remove();
+        let req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+          if (this.readyState === 4 && this.status === 200) {
+              $("#row" + actorID).remove();
+          }
+        };
+        req.open("GET", "/actors/delete/" + actorID, true);
+        req.send();
     }
 
     function addActor() {
-        var table = document.getElementById("actorTable");
-        var newRow = table.childNodes[3].childNodes[0].cloneNode(true);
-        var actorID = newActorId;
-        newActorId++;
-        newRow.id = "row" + actorID;
-        newRow.childNodes[1].firstChild.replaceWith(new Text(actorID.toString()));
-        var children = [3, 5, 7];
-        var id_endings = ['a', 'b', 'c'];
-        for (var index in children) {
-            var text = newRow.childNodes[children[index]].firstChild;
-            var textBox = document.createElement("INPUT");
-            textBox.setAttribute("type", "text");
-            textBox.setAttribute("id", "text" + actorID + id_endings[index]);
-            textBox.setAttribute("value", "");
-            newRow.childNodes[children[index]].replaceChild(textBox, text);
-        }
-        var button = newRow.childNodes[9].childNodes[1].childNodes[3];
-        button.innerText = "Save";
-        button.onclick = function(){ saveActor(actorID) };
-        table.appendChild(newRow);
-
+        let newRow = $("#actorTable > tbody:first > tr:first").clone(true);
+        newRow.attr('id', 'rowNew');
+        $('#actorTable > tbody:first > tr:last').after(newRow);
+        let button = $("#rowNew > td:last > div:first > button:last");
+        button.text("Save");
+        button.attr('onclick', 'saveActor("New", true)');
+        let arr = ['firstName', 'lastName', 'dob'];
+        $.each(arr, function(index, value) {
+            let text = $('#rowNew > td:eq(' + index + ') ');
+            if(value === 'dob') {
+                text.replaceWith('<td><input type="date" id="textNew' + index.toString() + '" name="' + value + '" value="" data-toggle="tooltip" title="DOB" /></td>');
+            } else {
+                text.replaceWith('<td><input type="text" id="textNew' + index.toString() + '" name="' + value + '" value="" /></td>');
+            }
+        });
+        let form = $("#rowNew > form:first");
+        form.attr('id', 'formNew');
     }
 </script>
 <div class="row">
@@ -70,25 +109,26 @@ the ActorsMovies table.
         <table id="actorTable" class="table table-light table-striped">
             <thead class="thead-dark">
             <tr>
-                <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Age Name</th>
+                <th>Age</th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
             {{#each actors}}
                 <tr id="row{{actorID}}">
-                    <td>{{actorID}}</td>
-                    <td>{{firstName}}</td>
-                    <td>{{lastName}}</td>
-                    <td>{{getAge dob}}</td>
-                    <td>
-                        <div class="d-flex flex-row-reverse">
-                            <button class="btn btn-secondary" onclick="deleteActor({{actorID}})">Delete</button>
-                            <button class="btn btn-primary mx-2" onclick="updateActor({{actorID}})">Update</button>
-                        </div>
-                    </td>
+                    <form id="form{{actorID}}" method="post" action="/actor/{{actorID}}">
+                        <td>{{firstName}}</td>
+                        <td>{{lastName}}</td>
+                        <td>{{getAge dob}}</td>
+                        <td>
+                            <div class="d-flex flex-row-reverse">
+                                <button type="button" class="btn btn-secondary" onclick="deleteActor({{actorID}})">Delete</button>
+                                <button type="button" class="btn btn-primary mx-2" onclick="updateActor({{actorID}})">Update</button>
+                                <input id="dobHidden{{actorID}}" name="dobHidden" type="hidden" value="{{moment dob "YYYY-MM-DD"}}"/>
+                            </div>
+                        </td>
+                    </form>
                 </tr>
             {{/each}}
         </table>

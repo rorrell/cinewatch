@@ -1,49 +1,123 @@
 <div class="container">
     <div class="row">
-        <div class="col-md">
-            <form>
+        <div class="col-xl-6">
+            <form id="addForm">
                 <h1 class="form-legend">Add new award</h1>
                 <div class="form-group">
-                    <label for="">name</label>
-                    <input type="text" class="form-control" id="" placeholder="Oscars for Best Picture">
+                    <label>Company</label>
+                    <input type="text" class="form-control" id="company" placeholder="Academy Award" required>
                 </div>
                 <div class="form-group">
-                    <label for="">yearAwarded</label>
-                    <input type="text" class="form-control" id="" placeholder="1994">
+                    <label>Category</label>
+                    <input type="text" class="form-control" id="category" placeholder="Best Actress" required>
                 </div>
                 <div class="form-group">
-                    <label for="">movieID</label>
-                    <input type="text" class="form-control" id="" placeholder="222">
+                    <label>Year Awarded</label>
+                    <input type="number" class="form-control" id="yearAwarded" placeholder="2011" min="1000" max="9999" required>
                 </div>
-                <button type="button" class="btn btn-primary form-submit">Submit</button>
+                <div class="form-group">
+                    <label>Movie</label>
+                    <select class="form-control" id="movie" required>
+                        <option value="" selected>Select Movie</option>
+                    {{#each movies}}
+                        <option value="{{movieID}}" data-name="{{name}}">{{name}} ({{releaseDate}})</option>
+                    {{/each}}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary form-submit" id="awardSubmit">Submit</button>
             </form>
         </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-lg">
-            <table class="table">
-                <h1 class="table-legend">Awards</h1>
+        <div class="col-xl-6">
+            <h1 class="table-legend">Awards</h1>
+            <table class="table table-light table-striped" id="awardTable">
                 <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">awardID</th>
-                        <th scope="col">name</th>
-                        <th scope="col">yearAwarded</th>
-                        <th scope="col">movieID</th>
-                    </tr>
+                <tr>
+                    <th>awardID</th>
+                    <th>company</th>
+                    <th>category</th>
+                    <th>yearAwarded</th>
+                    <th>&nbsp;</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr class="table-primary">
-                        <td>10</td>
-                        <td>Academy Awards for Best Actress</td>
-                        <td>2011</td>
-                        <td>50</td>
-                        <td><button type="submit" class="btn btn-success update-button">Update</button></td>
-                        <td><button type="submit" class="btn btn-danger update-button">Delete</button></td>
+                {{#each awards}}
+                    <tr id="{{awardID}}">
+                        <td>{{awardID}}</td>
+                        <td>{{company}}</td>
+                        <td>{{category}}</td>
+                        <td>{{yearAwarded}}</td>
+                        <td style="display:none;">{{movieID}}</td>
+                        <td>
+                            <div class="d-flex flex-row-reverse">
+                                <button class="btn btn-secondary" onclick="deleteActor({{actorID}})">Delete</button>
+                                <button class="btn btn-primary mx-2" onclick="updateActor({{actorID}})">Update</button>
+                            </div>
+                        </td>
                     </tr>
+                {{/each}}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    url = String(window.location.href);
+    document.getElementById("awardSubmit").addEventListener("click", addNewAward);
+
+    function add(data) {
+        let table = document.getElementById("awardTable").lastElementChild;
+        let newRow = document.createElement("tr");
+
+        let dataLength = data["rows"].length - 1;
+        let newData = data["rows"][dataLength];
+        console.log(newData);
+        newRow.setAttribute("id", String(newData["awardID"]));
+        for (i = 0; i < 4; i++) {
+            let newCol = document.createElement("td");
+            let values = Object.values(newData);
+            newCol.innerHTML = String(values[i]);
+            newRow.appendChild(newCol);
+        }
+        let buttonCol = document.createElement("td");
+        let buttonDiv = document.createElement("div");
+        buttonDiv.setAttribute("class", "d-flex flex-row-reverse");
+        let newDelete = document.createElement("button");
+        let newUpdate = document.createElement("button");
+        newDelete.setAttribute("class", "btn btn-secondary");
+        newDelete.innerHTML = "Delete";
+        newUpdate.setAttribute("class", "btn btn-primary mx-2");
+        newUpdate.innerHTML = "Update";
+        buttonDiv.appendChild(newDelete);
+        buttonDiv.appendChild(newUpdate);
+        buttonCol.appendChild(buttonDiv);
+        newRow.appendChild(buttonCol);
+
+        table.appendChild(newRow);
+    }
+
+    function addNewAward() {
+        document.getElementById("addForm").checkValidity();
+        if (document.getElementById("addForm").reportValidity() == false) {
+            return;
+        }
+        let req = new XMLHttpRequest();
+        let payload = {company:null, category:null, yearAwarded:null, movieID:null, name:null};
+        payload.company = document.getElementById("company").value;
+        payload.category = document.getElementById("category").value;
+        payload.yearAwarded = document.getElementById("yearAwarded").value;
+        payload.movieID = document.getElementById("movie").value;
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function() {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                console.log(data);
+                add(data);
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
+    }
+</script>

@@ -10,22 +10,13 @@ table, th, td {
     font-size: 1rem;
 }
 
-.update-button {
-    background-color: none !important;
-    border: none !important;
-}
-
 caption {
     color: black;
     caption-side: top;
     text-align: center;
 }
 
-.col-md {
-    padding-top: 50px;
-}
-
-.col-lg {
+.col-xl-6 {
     padding-top: 50px;
 }
 

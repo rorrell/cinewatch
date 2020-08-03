@@ -90,8 +90,44 @@ app.get('/actors', function (req, res, next) {
     });
 });
 
+// awards page
+const getAllQuery = 'SELECT * FROM Awards';
+const insertQuery = "INSERT INTO Awards (`company`, `category`, `yearAwarded`, `movieID`) VALUES (?, ?, ?, ?)";
+const getAllData = (res) => {
+    mysql.pool.query(getAllQuery, (err, rows, fields) => {
+        if (err) {
+            next(err);
+            return;
+        }
+        res.json({rows: rows});
+    })
+}
+
 app.get('/awards', function (req, res, next) {
-    res.render('awards')
+    mysql.pool.query("SELECT awardID, company, category, yearAwarded, movieID FROM Awards ORDER BY awardID ASC", [], (err, rows) => {
+        mysql.pool.query("SELECT movieID, name, DATE_FORMAT(releaseDate, '%b %e %Y') AS releaseDate FROM Movies ORDER BY name ASC", [], (err, rows2) => {
+            if (err) {
+                throw(err);
+            } else {
+                let context = {
+                    awards: rows,
+                    movies: rows2
+                };
+                res.render('awards', context);
+            }
+        });
+    });
+});
+app.post('/awards', function (req, res, next) {
+    var context = {};
+    var {company, category, yearAwarded, movieID} = req.body;
+    mysql.pool.query(insertQuery, [company, category, yearAwarded, movieID], function(err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        getAllData(res);
+    });
 });
 
 // start app

@@ -50,7 +50,7 @@
                         <td>
                             <div class="d-flex flex-row-reverse">
                                 <button class="btn btn-secondary" onclick="deleteAward({{awardID}})">Delete</button>
-                                <button class="btn btn-primary mx-2" onclick="updateActor({{actorID}})">Update</button>
+                                <button class="btn btn-primary mx-2" onclick="updateAward({{awardID}})">Update</button>
                             </div>
                         </td>
                     </tr>
@@ -139,5 +139,21 @@
         })
         req.send(JSON.stringify(payload));
         event.preventDefault();
+    }
+
+    function updateAward(ID) {
+        let row = document.getElementById("row" + ID);
+        var currCol = row.firstElementChild.nextElementSibling;
+        for (i = 0; i < 3; i++) {
+            let textbox = document.createElement("input");
+            textbox.setAttribute("type", "text");
+            textbox.setAttribute("value", currCol.textContent);
+            currCol.textContent = "";
+            currCol.appendChild(textbox);
+            currCol = currCol.nextElementSibling;
+        }
+        var button = row.lastElementChild.firstElementChild.lastElementChild;
+        button.innerText = "Save";
+        console.log(button);
     }
 </script>

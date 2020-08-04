@@ -91,10 +91,8 @@ app.get('/actors', function (req, res, next) {
 });
 
 // awards page
-const getAllQuery = 'SELECT * FROM Awards';
-const insertQuery = "INSERT INTO Awards (`company`, `category`, `yearAwarded`, `movieID`) VALUES (?, ?, ?, ?)";
 const getAllData = (res) => {
-    mysql.pool.query(getAllQuery, (err, rows, fields) => {
+    mysql.pool.query('SELECT * FROM Awards', (err, rows, fields) => {
         if (err) {
             next(err);
             return;
@@ -120,7 +118,7 @@ app.get('/awards', function (req, res, next) {
 app.post('/awards', function (req, res, next) {
     var context = {};
     var {company, category, yearAwarded, movieID} = req.body;
-    mysql.pool.query(insertQuery, [company, category, yearAwarded, movieID], function(err, result) {
+    mysql.pool.query("INSERT INTO Awards (`company`, `category`, `yearAwarded`, `movieID`) VALUES (?, ?, ?, ?)", [company, category, yearAwarded, movieID], function(err, result) {
         if (err) {
             next(err);
             return;
@@ -137,6 +135,18 @@ app.delete('/awards', function (req, res, next) {
             return;
         }
         context.results = "Deleted row";
+        res.send(context);
+    });
+});
+app.put('/awards', function (req, res, next) {
+    var context = {};
+    var {company, category, yearAwarded, awardID} = req.body;
+    mysql.pool.query("UPDATE Awards SET company=?, category=?, yearAwarded=? WHERE awardID=?", [company, category, yearAwarded, awardID], function(err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        context.results = "Updated row";
         res.send(context);
     });
 });

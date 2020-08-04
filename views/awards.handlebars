@@ -32,7 +32,6 @@
             <table class="table table-light table-striped" id="awardTable">
                 <thead class="thead-dark">
                 <tr>
-                    <th>awardID</th>
                     <th>company</th>
                     <th>category</th>
                     <th>yearAwarded</th>
@@ -42,7 +41,6 @@
                 <tbody>
                 {{#each awards}}
                     <tr id="row{{awardID}}">
-                        <td>{{awardID}}</td>
                         <td>{{company}}</td>
                         <td>{{category}}</td>
                         <td>{{yearAwarded}}</td>
@@ -72,7 +70,7 @@
         let newData = data["rows"][dataLength];
         console.log(newData);
         newRow.setAttribute("id", String(newData["awardID"]));
-        for (i = 0; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             let newCol = document.createElement("td");
             let values = Object.values(newData);
             newCol.innerHTML = String(values[i]);
@@ -101,7 +99,7 @@
             return;
         }
         let req = new XMLHttpRequest();
-        let payload = {company:null, category:null, yearAwarded:null, movieID:null, name:null};
+        let payload = {company:null, category:null, yearAwarded:null, movieID:null};
         payload.company = document.getElementById("company").value;
         payload.category = document.getElementById("category").value;
         payload.yearAwarded = document.getElementById("yearAwarded").value;
@@ -143,7 +141,7 @@
 
     function updateAward(ID) {
         let row = document.getElementById("row" + ID);
-        var currCol = row.firstElementChild.nextElementSibling;
+        var currCol = row.firstElementChild;
         for (i = 0; i < 3; i++) {
             let textbox = document.createElement("input");
             textbox.setAttribute("type", "text");
@@ -154,6 +152,43 @@
         }
         var button = row.lastElementChild.firstElementChild.lastElementChild;
         button.innerText = "Save";
-        console.log(button);
+        button.onclick = function(){saveAward(ID)};
+    }
+
+    function saveAward(ID) {
+        let row = document.getElementById("row" + ID);
+        var currCol = row.firstElementChild;
+        for (i = 0; i < 3; i++) {
+            let child = currCol.firstElementChild;
+            let text = currCol.firstElementChild.value;
+            currCol.removeChild(child);
+            currCol.textContent = text;
+            currCol = currCol.nextElementSibling;
+        }
+        let req = new XMLHttpRequest();
+        let company = row.firstElementChild;
+        let category = row.firstElementChild.nextElementSibling;
+        let yearAwarded = row.firstElementChild.nextElementSibling.nextElementSibling;
+        let awardID = String(row.getAttribute("id")).slice(3, 6);
+        let payload = {company:null, category:null, yearAwarded:null, awardID:null};
+        payload.company = company.textContent;
+        payload.category = category.textContent;
+        payload.yearAwarded = yearAwarded.textContent;
+        payload.awardID = awardID;
+
+        req.open("PUT", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                var button = row.lastElementChild.firstElementChild.lastElementChild;
+                button.innerText = "Update";
+                button.onclick = function(){updateAward(ID)};
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
     }
 </script>

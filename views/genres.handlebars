@@ -1,80 +1,27 @@
 Contains functionalities to view and manipulate data in the Genres table and
 the GenresMovies table.
-<script type="text/javascript">
-    var newGenreId = 100;
-
-    function updateGenre(genreID) {
-        var row = document.getElementById("row" + genreID);
-        var text = row.childNodes[3].firstChild;
-        var textBox = document.createElement("INPUT");
-        textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", "text" + genreID);
-        textBox.setAttribute("value", text.textContent);
-        row.childNodes[3].replaceChild(textBox, text);
-        var button = row.childNodes[5].childNodes[1].childNodes[3]
-        button.innerText = "Save";
-        button.onclick = function(){ saveGenre(genreID) };
-    }
-
-    function saveGenre(genreID) {
-        var row = document.getElementById("row" + genreID);
-        var textBox = row.childNodes[3].firstChild;
-        var text = new Text(textBox.value);
-        console.log(text);
-        row.childNodes[3].replaceChild(text, textBox);
-        var button = row.childNodes[5].childNodes[1].childNodes[3]
-        button.innerText = "Update";
-        button.onclick = function(){ updateGenre(genreID) };
-    }
-
-    function deleteGenre(genreID) {
-        var row = document.getElementById("row" + genreID);
-        row.remove();
-    }
-
-    function addGenre() {
-        var table = document.getElementById("genreTable");
-        var newRow = table.childNodes[3].childNodes[0].cloneNode(true);
-        var genreID = newGenreId;
-        newGenreId++;
-        newRow.id = "row" + genreID;
-        console.log(newRow.childNodes[1].firstChild);
-        newRow.childNodes[1].firstChild.replaceWith(new Text(genreID.toString()));
-        console.log(newRow.childNodes[1].firstChild);
-        var text = newRow.childNodes[3].firstChild;
-        var textBox = document.createElement("INPUT");
-        textBox.setAttribute("type", "text");
-        textBox.setAttribute("id", "text" + genreID);
-        textBox.setAttribute("value", "");
-        newRow.childNodes[3].replaceChild(textBox, text);
-        var button = newRow.childNodes[5].childNodes[1].childNodes[3]
-        button.innerText = "Save";
-        button.onclick = function(){ saveGenre(genreID) };
-        table.appendChild(newRow);
-
-    }
-</script>
+<script src="/js/genres.js"></script>
 <div class="row">
     <div class="mx-auto" style="width: auto;">
         <button class="btn btn-light my-3" onclick="addGenre()">Add</button>
         <table id="genreTable" class="table table-light table-striped">
             <thead class="thead-dark">
             <tr>
-                <th>#</th>
                 <th>Title</th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
             {{#each genres}}
                 <tr id="row{{genreID}}">
-                    <td>{{genreID}}</td>
+                    <form id="form{{genreID}}" method="post" action="/genre/{{genreID}}">
                     <td>{{title}}</td>
                     <td>
                         <div class="d-flex flex-row-reverse">
-                            <button class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>
-                            <button class="btn btn-primary mx-2" onclick="updateGenre({{genreID}})">Update</button>
+                            <button type="button" class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>
+                            <button type="button" class="btn btn-primary mx-2" onclick="updateGenre({{genreID}})">Update</button>
                         </div>
                     </td>
+                    </form>
                 </tr>
             {{/each}}
         </table>

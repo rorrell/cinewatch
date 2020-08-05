@@ -1,49 +1,206 @@
 <div class="container">
     <div class="row">
-        <div class="col-md">
-            <form>
+        <div class="col-xl-6">
+            <form id="addForm">
                 <h1 class="form-legend">Add new award</h1>
                 <div class="form-group">
-                    <label for="">name</label>
-                    <input type="text" class="form-control" id="" placeholder="Oscars for Best Picture">
+                    <label>Company</label>
+                    <input type="text" class="form-control" id="company" placeholder="Academy Award" required>
                 </div>
                 <div class="form-group">
-                    <label for="">yearAwarded</label>
-                    <input type="text" class="form-control" id="" placeholder="1994">
+                    <label>Category</label>
+                    <input type="text" class="form-control" id="category" placeholder="Best Actress" required>
                 </div>
                 <div class="form-group">
-                    <label for="">movieID</label>
-                    <input type="text" class="form-control" id="" placeholder="222">
+                    <label>Year Awarded</label>
+                    <input type="number" class="form-control" id="yearAwarded" placeholder="2011" min="1000" max="9999" required>
                 </div>
-                <button type="button" class="btn btn-primary form-submit">Submit</button>
+                <div class="form-group">
+                    <label>Movie</label>
+                    <select class="form-control" id="movie" required>
+                        <option value="" selected>Select Movie</option>
+                    {{#each movies}}
+                        <option value="{{movieID}}" data-name="{{name}}">{{name}} ({{releaseDate}})</option>
+                    {{/each}}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary form-submit" id="awardSubmit">Submit</button>
             </form>
         </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-lg">
-            <table class="table">
-                <h1 class="table-legend">Awards</h1>
+        <div class="col-xl-6">
+            <h1 class="table-legend">Awards</h1>
+            <input class="form-control" id="searchCompany" type="text" placeholder="Filter by Company, Category, Year">
+            <br>
+            <table class="table table-light table-striped" id="awardTable">
                 <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">awardID</th>
-                        <th scope="col">name</th>
-                        <th scope="col">yearAwarded</th>
-                        <th scope="col">movieID</th>
-                    </tr>
+                <tr>
+                    <th>company</th>
+                    <th>category</th>
+                    <th>yearAwarded</th>
+                    <th>&nbsp;</th>
+                </tr>
                 </thead>
-                <tbody>
-                    <tr class="table-primary">
-                        <td>10</td>
-                        <td>Academy Awards for Best Actress</td>
-                        <td>2011</td>
-                        <td>50</td>
-                        <td><button type="submit" class="btn btn-success update-button">Update</button></td>
-                        <td><button type="submit" class="btn btn-danger update-button">Delete</button></td>
+                <tbody id="awardTableBody">
+                {{#each awards}}
+                    <tr id="row{{awardID}}">
+                        <td>{{company}}</td>
+                        <td>{{category}}</td>
+                        <td>{{yearAwarded}}</td>
+                        <td style="display:none;">{{movieID}}</td>
+                        <td>
+                            <div class="d-flex flex-row-reverse">
+                                <button class="btn btn-secondary" onclick="deleteAward({{awardID}})">Delete</button>
+                                <button class="btn btn-primary mx-2" onclick="updateAward({{awardID}})">Update</button>
+                            </div>
+                        </td>
                     </tr>
+                {{/each}}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    url = String(window.location.href);
+    document.getElementById("awardSubmit").addEventListener("click", addNewAward);
+
+    function add(data) {
+        let table = document.getElementById("awardTable").lastElementChild;
+        let newRow = document.createElement("tr");
+
+        let dataLength = data["rows"].length - 1;
+        let newData = data["rows"][dataLength];
+        newRow.setAttribute("id", "row" + String(newData["awardID"]));
+        for (i = 1; i < 4; i++) {
+            let newCol = document.createElement("td");
+            let values = Object.values(newData);
+            newCol.innerHTML = String(values[i]);
+            newRow.appendChild(newCol);
+        }
+        let buttonCol = document.createElement("td");
+        let buttonDiv = document.createElement("div");
+        buttonDiv.setAttribute("class", "d-flex flex-row-reverse");
+        let newDelete = document.createElement("button");
+        let newUpdate = document.createElement("button");
+        newDelete.setAttribute("class", "btn btn-secondary");
+        newDelete.setAttribute("onclick", "deleteAward(" + String(newData["awardID"] + ")"));
+        newDelete.innerHTML = "Delete";
+        newUpdate.setAttribute("class", "btn btn-primary mx-2");
+        newUpdate.setAttribute("onclick", "updateAward(" + String(newData["awardID"] + ")"));
+        newUpdate.innerHTML = "Update";
+        buttonDiv.appendChild(newDelete);
+        buttonDiv.appendChild(newUpdate);
+        buttonCol.appendChild(buttonDiv);
+        newRow.appendChild(buttonCol);
+
+        table.appendChild(newRow);
+    }
+
+    function addNewAward() {
+        document.getElementById("addForm").checkValidity();
+        if (document.getElementById("addForm").reportValidity() == false) {
+            return;
+        }
+        let req = new XMLHttpRequest();
+        let payload = {company:null, category:null, yearAwarded:null, movieID:null};
+        payload.company = document.getElementById("company").value;
+        payload.category = document.getElementById("category").value;
+        payload.yearAwarded = document.getElementById("yearAwarded").value;
+        payload.movieID = document.getElementById("movie").value;
+        req.open("POST", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function() {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                add(data);
+                document.getElementById("addForm").reset();
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
+    }
+
+    function deleteAward(ID) {
+        var row = document.getElementById("row" + ID);
+        let req = new XMLHttpRequest();
+        let payload = {awardID:null};
+        payload.awardID = ID;
+        req.open("DELETE", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                row.remove();
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
+    }
+
+    function updateAward(ID) {
+        let row = document.getElementById("row" + ID);
+        var currCol = row.firstElementChild;
+        for (i = 0; i < 3; i++) {
+            let textbox = document.createElement("input");
+            textbox.setAttribute("type", "text");
+            textbox.setAttribute("value", currCol.textContent);
+            currCol.textContent = "";
+            currCol.appendChild(textbox);
+            currCol = currCol.nextElementSibling;
+        }
+        var button = row.lastElementChild.firstElementChild.lastElementChild;
+        button.innerText = "Save";
+        button.onclick = function(){saveAward(ID)};
+    }
+
+    function saveAward(ID) {
+        let row = document.getElementById("row" + ID);
+        var currCol = row.firstElementChild;
+        for (i = 0; i < 3; i++) {
+            let child = currCol.firstElementChild;
+            let text = currCol.firstElementChild.value;
+            currCol.removeChild(child);
+            currCol.textContent = text;
+            currCol = currCol.nextElementSibling;
+        }
+        let req = new XMLHttpRequest();
+        let company = row.firstElementChild;
+        let category = row.firstElementChild.nextElementSibling;
+        let yearAwarded = row.firstElementChild.nextElementSibling.nextElementSibling;
+        let awardID = String(row.getAttribute("id")).slice(3, 6);
+        let payload = {company:null, category:null, yearAwarded:null, awardID:null};
+        payload.company = company.textContent;
+        payload.category = category.textContent;
+        payload.yearAwarded = yearAwarded.textContent;
+        payload.awardID = awardID;
+
+        req.open("PUT", url, true);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.addEventListener("load", function () {
+            if (req.status >= 200 && req.status < 400) {
+                let data = JSON.parse(req.responseText);
+                var button = row.lastElementChild.firstElementChild.lastElementChild;
+                button.innerText = "Update";
+                button.onclick = function(){updateAward(ID)};
+            } else {
+                console.log("Error in network request: " + req.statusText);
+            }
+        })
+        req.send(JSON.stringify(payload));
+        event.preventDefault();
+    }
+    // Placeholder for actual search function, which can search by company, category and/or year
+    $(document).ready(function(){
+        $("#searchCompany").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#awardTableBody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+</script>

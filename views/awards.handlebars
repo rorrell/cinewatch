@@ -70,8 +70,6 @@
 
         let dataLength = data["rows"].length - 1;
         let newData = data["rows"][dataLength];
-        console.log(newData);
-        console.log(newData["awardID"]);
         newRow.setAttribute("id", "row" + String(newData["awardID"]));
         for (i = 1; i < 4; i++) {
             let newCol = document.createElement("td");
@@ -114,7 +112,6 @@
         req.addEventListener("load", function() {
             if (req.status >= 200 && req.status < 400) {
                 let data = JSON.parse(req.responseText);
-                console.log(data);
                 add(data);
                 document.getElementById("addForm").reset();
             } else {
@@ -135,7 +132,6 @@
         req.addEventListener("load", function () {
             if (req.status >= 200 && req.status < 400) {
                 let data = JSON.parse(req.responseText);
-                console.log(data);
                 row.remove();
             } else {
                 console.log("Error in network request: " + req.statusText);

@@ -56,3 +56,12 @@ function addGenre() {
     let form = $("#rowNew > form:first");
     form.attr('id', 'formNew');
 }
+
+$(document).ready(function(){
+    $("#searchGenres").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#genreTable tbody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});

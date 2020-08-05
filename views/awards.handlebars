@@ -116,6 +116,7 @@
                 let data = JSON.parse(req.responseText);
                 console.log(data);
                 add(data);
+                document.getElementById("addForm").reset();
             } else {
                 console.log("Error in network request: " + req.statusText);
             }

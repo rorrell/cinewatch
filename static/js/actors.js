@@ -98,3 +98,12 @@ function addActor() {
     let form = $("#rowNew > form:first");
     form.attr('id', 'formNew');
 }
+
+$(document).ready(function(){
+    $("#searchActors").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#actorTable tbody tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});

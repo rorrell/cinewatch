@@ -148,7 +148,7 @@ app.post('/actors/update/:id', function(req, res, next) {
 });
 
 // awards page
-const getAllData = (res) => {
+const getAllAwardsData = (res) => {
     mysql.pool.query('SELECT * FROM Awards', (err, rows, fields) => {
         if (err) {
             next(err);
@@ -180,7 +180,7 @@ app.post('/awards', function (req, res, next) {
             next(err);
             return;
         }
-        getAllData(res);
+        getAllAwardsData(res);
     });
 });
 app.delete('/awards', function (req, res, next) {

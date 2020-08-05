@@ -147,8 +147,65 @@ app.post('/actors/update/:id', function(req, res, next) {
     });
 });
 
+// awards page
+const getAllData = (res) => {
+    mysql.pool.query('SELECT * FROM Awards', (err, rows, fields) => {
+        if (err) {
+            next(err);
+            return;
+        }
+        res.json({rows: rows});
+    })
+}
 app.get('/awards', function (req, res, next) {
-    res.render('awards')
+    mysql.pool.query("SELECT awardID, company, category, yearAwarded, movieID FROM Awards ORDER BY awardID ASC", [], (err, rows) => {
+        mysql.pool.query("SELECT movieID, name, DATE_FORMAT(releaseDate, '%b %e %Y') AS releaseDate FROM Movies ORDER BY name ASC", [], (err, rows2) => {
+            if (err) {
+                throw(err);
+            } else {
+                let context = {
+                    awards: rows,
+                    movies: rows2
+                };
+                res.render('awards', context);
+            }
+        });
+    });
+});
+app.post('/awards', function (req, res, next) {
+    var context = {};
+    var {company, category, yearAwarded, movieID} = req.body;
+    mysql.pool.query("INSERT INTO Awards (`company`, `category`, `yearAwarded`, `movieID`) VALUES (?, ?, ?, ?)", [company, category, yearAwarded, movieID], function(err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        getAllData(res);
+    });
+});
+app.delete('/awards', function (req, res, next) {
+    var context = {};
+    var {awardID} = req.body;
+    mysql.pool.query("DELETE FROM Awards WHERE awardID=?", [awardID], function (err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        context.results = "Deleted row";
+        res.send(context);
+    });
+});
+app.put('/awards', function (req, res, next) {
+    var context = {};
+    var {company, category, yearAwarded, awardID} = req.body;
+    mysql.pool.query("UPDATE Awards SET company=?, category=?, yearAwarded=? WHERE awardID=?", [company, category, yearAwarded, awardID], function(err, result) {
+        if (err) {
+            next(err);
+            return;
+        }
+        context.results = "Updated row";
+        res.send(context);
+    });
 });
 
 // start app

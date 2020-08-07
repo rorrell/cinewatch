@@ -122,7 +122,7 @@ app.post('/actors', function (req, res, next) {
         if(error) {
             throw(error);
         } else {
-            res.send({ id: rows[0][0]['id'] });
+            res.redirect('/actors');
         }
     })
 });

@@ -75,11 +75,11 @@ app.get('/genres', function (req, res, next) {
 });
 
 app.post('/genres', function (req, res, next) {
-    mysql.pool.query("CALL InsertGenre(?)", [req.body.textNew], (error, rows) => {
+    mysql.pool.query("CALL InsertGenre(?)", [req.body.title], (error, rows) => {
         if(error) {
             throw(error);
         } else {
-           res.send({ id: rows[0][0]['id'] });
+           res.redirect('/genres');
         }
     })
 });

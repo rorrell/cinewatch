@@ -1,15 +1,15 @@
 <div class="container">
     <div class="row">
         <div class="col-xl-6">
-            <form id="addForm">
+            <form id="addAwardForm">
                 <h1 class="form-legend">Add new award</h1>
                 <div class="form-group">
                     <label>Company</label>
-                    <input type="text" class="form-control" id="company" placeholder="Academy Award" required>
+                    <input type="text" class="form-control" id="awardCompany" placeholder="Academy Award" required>
                 </div>
                 <div class="form-group">
                     <label>Category</label>
-                    <input type="text" class="form-control" id="category" placeholder="Best Actress" required>
+                    <input type="text" class="form-control" id="awardCategory" placeholder="Best Actress" required>
                 </div>
                 <div class="form-group">
                     <label>Year Awarded</label>
@@ -17,11 +17,13 @@
                 </div>
                 <div class="form-group">
                     <label>Movie</label>
-                    <select class="form-control" id="movie" required>
-                        <option value="" selected>Select Movie</option>
-                    {{#each movies}}
+                    <select class="form-control" id="movieForAward" required>
+                        <option value="no-movie" selected>Select Movie (optional)</option>
+                    {{#data2}}
+                    {{#if movieID}}
                         <option value="{{movieID}}" data-name="{{name}}">{{name}} ({{releaseDate}})</option>
-                    {{/each}}
+                    {{/if}}
+                    {{/data2}}
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary form-submit" id="awardSubmit">Submit</button>
@@ -29,23 +31,23 @@
         </div>
         <div class="col-xl-6">
             <h1 class="table-legend">Awards</h1>
-            <input class="form-control" id="searchCompany" type="text" placeholder="Filter by Company, Category, Year">
-            <br>
             <table class="table table-light table-striped" id="awardTable">
                 <thead class="thead-dark">
                 <tr>
-                    <th>company</th>
-                    <th>category</th>
-                    <th>yearAwarded</th>
+                    <th>Company</th>
+                    <th>Category</th>
+                    <th>Year Awarded</th>
+                    <th>Movie</th>
                     <th>&nbsp;</th>
                 </tr>
                 </thead>
                 <tbody id="awardTableBody">
-                {{#each awards}}
+                {{#data}}
                     <tr id="row{{awardID}}">
                         <td>{{company}}</td>
                         <td>{{category}}</td>
                         <td>{{yearAwarded}}</td>
+                        <td>{{name}}</td>
                         <td style="display:none;">{{movieID}}</td>
                         <td>
                             <div class="d-flex flex-row-reverse">
@@ -54,7 +56,7 @@
                             </div>
                         </td>
                     </tr>
-                {{/each}}
+                {{/data}}
                 </tbody>
             </table>
         </div>
@@ -71,12 +73,35 @@
         let dataLength = data["rows"].length - 1;
         let newData = data["rows"][dataLength];
         newRow.setAttribute("id", "row" + String(newData["awardID"]));
-        for (i = 1; i < 4; i++) {
+        for (i = 1; i < 5; i++) {
             let newCol = document.createElement("td");
             let values = Object.values(newData);
-            newCol.innerHTML = String(values[i]);
-            newRow.appendChild(newCol);
+            if (i == 4) {
+                if (String(values[i]) == "null") {
+                    newCol.innerHTML = "";
+                    newRow.appendChild(newCol);
+                } else {
+                    let movieSelection = document.getElementById("movieForAward");
+                    let option = movieSelection.firstElementChild;
+                    for (j = 0; j < movieSelection.length; j++) {
+                        if (String(values[i]) == option.value) {
+                            newCol.innerHTML = option.dataset.name;
+                            newRow.appendChild(newCol);
+                            break;
+                        }
+                        option = option.nextElementSibling;
+                    }
+                }
+            } else {
+                newCol.innerHTML = String(values[i]);
+                newRow.appendChild(newCol);
+            }
         }
+        let newCol = document.createElement("td");
+        newCol.setAttribute("style", "display:none;");
+        newCol.innerHTML = String(newData["movieID"]);
+        newRow.appendChild(newCol);
+
         let buttonCol = document.createElement("td");
         let buttonDiv = document.createElement("div");
         buttonDiv.setAttribute("class", "d-flex flex-row-reverse");
@@ -97,23 +122,23 @@
     }
 
     function addNewAward() {
-        document.getElementById("addForm").checkValidity();
-        if (document.getElementById("addForm").reportValidity() == false) {
+        document.getElementById("addAwardForm").checkValidity();
+        if (document.getElementById("addAwardForm").reportValidity() == false) {
             return;
         }
         let req = new XMLHttpRequest();
         let payload = {company:null, category:null, yearAwarded:null, movieID:null};
-        payload.company = document.getElementById("company").value;
-        payload.category = document.getElementById("category").value;
+        payload.company = document.getElementById("awardCompany").value;
+        payload.category = document.getElementById("awardCategory").value;
         payload.yearAwarded = document.getElementById("yearAwarded").value;
-        payload.movieID = document.getElementById("movie").value;
+        payload.movieID = document.getElementById("movieForAward").value;
         req.open("POST", url, true);
         req.setRequestHeader("Content-Type", "application/json");
         req.addEventListener("load", function() {
             if (req.status >= 200 && req.status < 400) {
                 let data = JSON.parse(req.responseText);
                 add(data);
-                document.getElementById("addForm").reset();
+                document.getElementById("addAwardForm").reset();
             } else {
                 console.log("Error in network request: " + req.statusText);
             }
@@ -144,13 +169,37 @@
     function updateAward(ID) {
         let row = document.getElementById("row" + ID);
         var currCol = row.firstElementChild;
-        for (i = 0; i < 3; i++) {
-            let textbox = document.createElement("input");
-            textbox.setAttribute("type", "text");
-            textbox.setAttribute("value", currCol.textContent);
-            currCol.textContent = "";
-            currCol.appendChild(textbox);
-            currCol = currCol.nextElementSibling;
+        var movieSelection = document.getElementById("movieForAward").cloneNode(true);
+        movieSelection.removeAttribute("id");
+        movieSelection.firstElementChild.setAttribute("selected", "false");
+        for (i = 0; i < 4; i++) {
+            if (i == 3) {
+                let movieField = row.lastElementChild.previousElementSibling.previousElementSibling;
+                if (movieField.innerHTML == "") {
+                    movieField.appendChild(movieSelection);
+                    currCol = currCol.nextElementSibling;
+                } else {
+                    let movieIdentifier = String(row.lastElementChild.previousElementSibling.innerHTML);
+                    let movieCounter = movieSelection.firstElementChild;
+                    for (j = 0; j < movieSelection.length; j++) {
+                        if (movieCounter.value == movieIdentifier) {
+                            movieCounter.setAttribute("selected", "true");
+                            break;
+                        }
+                        movieCounter = movieCounter.nextElementSibling;
+                    }
+                    movieField.innerHTML = "";
+                    movieField.appendChild(movieSelection);
+                    currCol = currCol.nextElementSibling;
+                }
+            } else {
+                let textbox = document.createElement("input");
+                textbox.setAttribute("type", "text");
+                textbox.setAttribute("value", currCol.textContent);
+                currCol.textContent = "";
+                currCol.appendChild(textbox);
+                currCol = currCol.nextElementSibling;
+            }
         }
         var button = row.lastElementChild.firstElementChild.lastElementChild;
         button.innerText = "Save";
@@ -160,22 +209,50 @@
     function saveAward(ID) {
         let row = document.getElementById("row" + ID);
         var currCol = row.firstElementChild;
-        for (i = 0; i < 3; i++) {
-            let child = currCol.firstElementChild;
-            let text = currCol.firstElementChild.value;
-            currCol.removeChild(child);
-            currCol.textContent = text;
-            currCol = currCol.nextElementSibling;
+        var movieText = null;
+        var movieValue = null;
+        if (currCol.firstElementChild.value == "") {
+                return;
+            }
+        if (currCol.nextElementSibling.firstElementChild.value == "") {
+                return;
+            }
+        if (currCol.nextElementSibling.nextElementSibling.firstElementChild.value == "") {
+                return;
+            }
+        for (i = 0; i < 4; i++) {
+            if (i == 3) {
+                let child = currCol.firstElementChild;
+                let option = child.firstElementChild;
+                for (j = 0; j < child.length; j++) {
+                    if (option.selected == true) {
+                        movieText = option.dataset.name;
+                        movieValue = option.value;
+                        break;
+                    }
+                    option = option.nextElementSibling;
+                }
+                currCol.removeChild(child);
+                currCol.textContent = movieText;
+            } else {
+                let child = currCol.firstElementChild;
+                let text = currCol.firstElementChild.value;
+                currCol.removeChild(child);
+                currCol.textContent = text;
+                currCol = currCol.nextElementSibling;
+            }
         }
         let req = new XMLHttpRequest();
         let company = row.firstElementChild;
         let category = row.firstElementChild.nextElementSibling;
         let yearAwarded = row.firstElementChild.nextElementSibling.nextElementSibling;
+        let movieID = movieValue;
         let awardID = String(row.getAttribute("id")).slice(3, 6);
-        let payload = {company:null, category:null, yearAwarded:null, awardID:null};
+        let payload = {company:null, category:null, yearAwarded:null, movieID:null, awardID:null};
         payload.company = company.textContent;
         payload.category = category.textContent;
         payload.yearAwarded = yearAwarded.textContent;
+        payload.movieID = movieID;
         payload.awardID = awardID;
 
         req.open("PUT", url, true);
@@ -193,14 +270,4 @@
         req.send(JSON.stringify(payload));
         event.preventDefault();
     }
-    // Placeholder for actual search function, which can search by company, category and/or year
-    $(document).ready(function(){
-        $("#searchCompany").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#awardTableBody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
-    });
-
 </script>

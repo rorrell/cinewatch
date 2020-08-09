@@ -230,6 +230,7 @@
                     if (option.selected == true) {
                         movieText = option.dataset.name;
                         movieValue = option.value;
+                        row.lastElementChild.previousElementSibling.innerHTML = option.value;
                         break;
                     }
                     option = option.nextElementSibling;

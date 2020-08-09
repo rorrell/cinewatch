@@ -249,6 +249,9 @@
         let category = row.firstElementChild.nextElementSibling;
         let yearAwarded = row.firstElementChild.nextElementSibling.nextElementSibling;
         let movieID = movieValue;
+        if (movieID == "no-movie") {
+            movieID = null;
+        }
         let awardID = String(row.getAttribute("id")).slice(3, 6);
         let payload = {company:null, category:null, yearAwarded:null, movieID:null, awardID:null};
         payload.company = company.textContent;

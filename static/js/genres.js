@@ -1,9 +1,13 @@
 function updateGenre(genreID) {
     let text = $("#row" + genreID + " > td:first");
     text.replaceWith('<td><input type="text" id="text' + genreID + '" name="title" value="' + text.text() + '" /></td>');
-    let button = $("#row" + genreID + " > td:last > div:first > button:last");
-    button.text("Save");
-    button.attr('onclick', 'saveGenre(' + genreID + ', false)');
+    let updateButton = $("#row" + genreID + " > td:last > div:first > button:last");
+    updateButton.text("Save");
+    updateButton.attr('onclick', 'saveGenre(' + genreID + ', false)');
+    let viewButton = $('#row' + genreID + ' > td:eq(1) > button:first');
+    viewButton.text("Edit");
+    viewButton.removeData('mode');
+    viewButton.attr('data-mode', 'edit');
 }
 
 function saveGenre(genreID, isNew) {
@@ -44,24 +48,34 @@ function deleteGenre(genreID) {
     req.send();
 }
 
-function addGenre() {
-    let newRow = $("#genreTable > tbody:first > tr:first").clone(true);
-    newRow.attr('id', 'rowNew');
-    $('#genreTable > tbody:first > tr:last').after(newRow);
-    let button = $("#rowNew > td:last > div:first > button:last");
-    button.text("Save");
-    button.attr('onclick', 'saveGenre("New", true)');
-    let text = $("#rowNew > td:first");
-    text.replaceWith('<td><input type="text" id="textNew" name="title" value=""></td>');
-    let form = $("#rowNew > form:first");
-    form.attr('id', 'formNew');
-}
-
 $(document).ready(function(){
     $("#searchGenres").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
+        let value = $(this).val().toLowerCase();
         $("#genreTable tbody tr").filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
+    });
+
+    $('#movieModal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget);
+        let movieList = button.data('movies');
+        let mode = button.data('mode');
+        let modal = $(this);
+        let select = modal.find('#movieSelect');
+        if(mode === 'view') {
+            let list = '<ul>';
+            for (let movie of movieList.split(",")) {
+                list += '<li>' + movie + '</li>';
+            }
+            list += '</ul>'
+            modal.find('#modalParagraph').html(list);
+            select.attr('hidden', true);
+        } else if(mode === 'edit') {
+            let movieIDs = button.data('movieids');
+            for (let movie of movieIDs.split(",")) {
+                $('#movieModal select option[value=' + movie + ']').attr('selected', 'selected');
+            }
+            select.attr('hidden', false);
+        }
     });
 });

@@ -178,21 +178,34 @@ app.put('/theatres', function (req, res, next) {
 });
 
 // genres page
-app.get('/genres', function (req, res, next) {
-    mysql.pool.query("SELECT genreID, title FROM Genres ORDER BY title ASC", [], (err, rows) => {
+app.get('/genres', function (req, res) {
+    let sql = "SELECT g.*, GROUP_CONCAT(m.name) AS movieList, GROUP_CONCAT(m.movieID) AS movieIDs\n" +
+        "FROM Genres g\n" +
+        "LEFT JOIN GenresMovies gm ON g.genreID = gm.genreID\n" +
+        "LEFT JOIN Movies m ON gm.movieID = m.movieID\n" +
+        "GROUP BY g.genreID\n" +
+        "ORDER BY title ASC";
+    mysql.pool.query(sql, [], (err, rows) => {
        if(err) {
            throw(err);
        } else {
-           let context = {
-               genres: rows
-           };
-           res.render('genres', context);
+           let genres = rows;
+           let sql = "SELECT movieID, name FROM Movies";
+           mysql.pool.query(sql, [], (err, rows) => {
+               if(err) throw(err);
+
+               let context = {
+                   genres: genres,
+                   movies: rows
+               };
+               res.render('genres', context);
+           });
        }
     });
 });
 
 app.post('/genres', function (req, res, next) {
-    mysql.pool.query("CALL InsertGenre(?)", [req.body.title], (error, rows) => {
+    mysql.pool.query("INSERT INTO Genres (title) VALUES (?)", [req.body.title], (error) => {
         if(error) {
             throw(error);
         } else {
@@ -236,7 +249,7 @@ app.get('/actors', function (req, res, next) {
 });
 
 app.post('/actors', function (req, res, next) {
-    mysql.pool.query("CALL InsertActor(?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.dob], (error, rows) => {
+    mysql.pool.query("INSERT INTO Actors (firstName, lastName, dob) VALUES (?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.dob], (error) => {
         if(error) {
             throw(error);
         } else {
@@ -246,7 +259,7 @@ app.post('/actors', function (req, res, next) {
 });
 
 app.get('/actors/delete/:id', function(req, res, next) {
-    mysql.pool.query("DELETE FROM Actors WHERE actorID = ?", [req.params.id], (error, rows) => {
+    mysql.pool.query("DELETE FROM Actors WHERE actorID = ?", [req.params.id], (error) => {
         if(error) {
             throw(error);
         } else {

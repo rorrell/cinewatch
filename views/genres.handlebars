@@ -44,7 +44,7 @@
                 <tr id="row{{genreID}}">
                     <form id="form{{genreID}}" method="post" action="/genre/{{genreID}}">
                     <td>{{title}}</td>
-                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#movieModal" data-movies="{{movieList}}" data-movieIDs="{{movieIDs}}" data-mode="view">View</button></td>
+                    <td><button id="movieBtn{{genreID}}" type="button" class="btn btn-info" data-toggle="modal" data-target="#movieModal" data-movies="{{movieList}}" data-movieIDs="{{movieIDs}}" data-mode="view">View</button></td>
                     <td>
                         <div class="d-flex flex-row-reverse">
                             <button type="button" class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>

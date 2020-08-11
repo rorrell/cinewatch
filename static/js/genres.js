@@ -48,6 +48,25 @@ function deleteGenre(genreID) {
     req.send();
 }
 
+function updateMovies(event, genreID) {
+    let option = event.target;
+    let select = option.parentElement;
+    let viewButton = $('#movieBtn' + genreID);
+    viewButton.removeData('movies');
+    viewButton.removeData('movieids');
+    let movies = '';
+    let ids = '';
+    $.each(select.selectedOptions, function(index, value) {
+        movies += value.text + ',';
+        ids += value.value + ',';
+        console.log("index: " + value.value + "; value: " + value.text);
+    });
+    if(movies.length > 0) { movies = movies.slice(0, -1); }
+    if(ids.length > 0) { ids = ids.slice(0, -1); }
+    viewButton.attr('data-movies', movies);
+    viewButton.attr('data-movieids', ids);
+}
+
 $(document).ready(function(){
     $("#searchGenres").on("keyup", function() {
         let value = $(this).val().toLowerCase();
@@ -58,6 +77,8 @@ $(document).ready(function(){
 
     $('#movieModal').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget);
+        let genreID = button.id.replace('movieBtn', '');
+        button.attr('onclick', 'updateMovies(event, ' + genreID + ')');
         let movieList = button.data('movies');
         let mode = button.data('mode');
         let modal = $(this);
@@ -71,7 +92,7 @@ $(document).ready(function(){
             modal.find('#modalParagraph').html(list);
             select.attr('hidden', true);
         } else if(mode === 'edit') {
-            let movieIDs = button.data('movieids');
+            let movieIDs = button.data('movieids').toString();
             for (let movie of movieIDs.split(",")) {
                 $('#movieModal select option[value=' + movie + ']').attr('selected', 'selected');
             }

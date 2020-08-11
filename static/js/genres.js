@@ -10,6 +10,16 @@ function updateGenre(genreID) {
     viewButton.attr('data-mode', 'edit');
 }
 
+function saveGenreMovies(genreID) {
+    let req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+
+      }
+    };
+    req.open()
+}
+
 function saveGenre(genreID, isNew) {
     let row = $("#row" + genreID);
     let textBox = $("#row" + genreID + " > td:first > input:first");
@@ -49,8 +59,7 @@ function deleteGenre(genreID) {
 }
 
 function updateMovies(event, genreID) {
-    let option = event.target;
-    let select = option.parentElement;
+    let select = event.target;
     let viewButton = $('#movieBtn' + genreID);
     viewButton.removeData('movies');
     viewButton.removeData('movieids');
@@ -77,12 +86,12 @@ $(document).ready(function(){
 
     $('#movieModal').on('show.bs.modal', function (event) {
         let button = $(event.relatedTarget);
-        let genreID = button.id.replace('movieBtn', '');
-        button.attr('onclick', 'updateMovies(event, ' + genreID + ')');
+        let genreID = button.prop('id').replace('movieBtn', '');
         let movieList = button.data('movies');
         let mode = button.data('mode');
         let modal = $(this);
         let select = modal.find('#movieSelect');
+        select.attr('onchange', 'updateMovies(event, ' + genreID + ')');
         if(mode === 'view') {
             let list = '<ul>';
             for (let movie of movieList.split(",")) {

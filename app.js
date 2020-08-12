@@ -53,6 +53,10 @@ app.get('/', function (req, res, next) {
     res.render('home', context);
 });
 
+// routes
+app.use('/genres', require('./routes/genres.routes.js'));
+app.use('/actors', require('./routes/actors.routes.js'));
+
 // movies page
 const getAllMoviesData = (res) => {
     mysql.pool.query("SELECT movieID, name, DATE_FORMAT(releaseDate, '%b %e %Y') AS releaseDate, averageCriticRating, synopsis FROM Movies ORDER BY movieID ASC", (err, rows, fields) => {
@@ -174,94 +178,6 @@ app.put('/theatres', function (req, res, next) {
         }
         context.results = "Updated row";
         res.send(context);
-    });
-});
-
-// genres page
-app.get('/genres', function (req, res, next) {
-    mysql.pool.query("SELECT genreID, title FROM Genres ORDER BY title ASC", [], (err, rows) => {
-       if(err) {
-           throw(err);
-       } else {
-           let context = {
-               genres: rows
-           };
-           res.render('genres', context);
-       }
-    });
-});
-
-app.post('/genres', function (req, res, next) {
-    mysql.pool.query("CALL InsertGenre(?)", [req.body.title], (error, rows) => {
-        if(error) {
-            throw(error);
-        } else {
-            res.redirect('/genres');
-        }
-    })
-});
-
-app.get('/genres/delete/:id', function(req, res, next) {
-    mysql.pool.query("DELETE FROM Genres WHERE genreID = ?", [req.params.id], (error, rows) => {
-        if(error) {
-            throw(error);
-        } else {
-            res.send({ result: true });
-        }
-    });
- });
-
- app.post('/genres/update/:id', function(req, res, next) {
-    mysql.pool.query("UPDATE Genres SET title = ? WHERE genreID = ?", [req.body.title, req.params.id], (error, rows) => {
-       if(error) {
-           throw(error);
-       } else {
-           res.send({ result: true });
-       }
-    });
- });
-
- // actors page
-app.get('/actors', function (req, res, next) {
-    mysql.pool.query("SELECT actorID, firstName, lastName, dob FROM Actors ORDER BY lastName ASC", [], (err, rows) => {
-        if(err) {
-            throw(err);
-        } else {
-            let context = {
-                actors: rows
-            };
-            res.render('actors', context);
-        }
-    });
-});
-
-app.post('/actors', function (req, res, next) {
-    mysql.pool.query("CALL InsertActor(?, ?, ?)", [req.body.firstName, req.body.lastName, req.body.dob], (error, rows) => {
-        if(error) {
-            throw(error);
-        } else {
-            res.redirect('/actors');
-        }
-    })
-});
-
-app.get('/actors/delete/:id', function(req, res, next) {
-    mysql.pool.query("DELETE FROM Actors WHERE actorID = ?", [req.params.id], (error, rows) => {
-        if(error) {
-            throw(error);
-        } else {
-            res.send({ result: true });
-        }
-    });
-});
-
-app.post('/actors/update/:id', function(req, res, next) {
-    mysql.pool.query("UPDATE Actors SET firstName = ?, lastName = ?, dob = ? WHERE actorID = ?", [req.body.firstName, req.body.lastName, req.body.dob, req.params.id], (error, rows) => {
-        if(error) {
-            throw(error);
-        } else {
-            res.send({ result: true });
-        }
     });
 });
 

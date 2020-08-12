@@ -1,0 +1,36 @@
+<script src="/js/genres.js"></script>
+<div class="d-flex flex-row justify-content-around align-items-start mt-5">
+    <div>
+        <form id="formNew" method="post" action="/genres" class="d-flex flex-column align-items-center">
+            <h1 class="form-legend">Add new genre</h1>
+            <div class="form-group">
+                <label for="textNew">Title</label>
+                <input type="text" class="form-control" id="textNew" name="title" placeholder="Comedy" />
+            </div>
+            <button type="submit" class="btn btn-primary mx-2">Save</button>
+        </form>
+    </div>
+    <div>
+        <table id="genreTable" class="table table-light table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Title</th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            {{#each genres}}
+                <tr id="row{{genreID}}">
+                    <form id="form{{genreID}}" method="post" action="/genre/{{genreID}}">
+                        <td>{{title}}</td>
+                        <td>
+                            <div class="d-flex flex-row-reverse">
+                                <button type="button" class="btn btn-secondary" onclick="deleteGenre({{genreID}})">Delete</button>
+                                <button type="button" class="btn btn-primary mx-2" onclick="updateGenre({{genreID}})">Update</button>
+                            </div>
+                        </td>
+                    </form>
+                </tr>
+            {{/each}}
+        </table>
+    </div>
+</div>

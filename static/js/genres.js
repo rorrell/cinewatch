@@ -26,8 +26,8 @@ function saveGenre(genreID, isNew) {
             button.attr('onclick', 'updateGenre(' + genreID + ')');
         }
     };
-    let url = isNew ? "/genres" : "/genres/update/" + genreID;
-    req.open("POST", url, true);
+    let url = isNew ? "/genres" : "/genres/" + genreID;
+    req.open(isNew ? "POST" : "PUT", url, true);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     let body = isNew ? "textNew=" + text : "title=" + text;
     req.send(body);
@@ -40,7 +40,7 @@ function deleteGenre(genreID) {
             $("#row" + genreID).remove();
         }
     };
-    req.open("GET", "/genres/delete/" + genreID, true);
+    req.open("DELETE", "/genres/" + genreID, true);
     req.send();
 }
 

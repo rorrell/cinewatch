@@ -62,8 +62,8 @@ function saveActor(actorID, isNew) {
             button.attr('onclick', 'updateActor(' + actorID + ')');
         }
     };
-    let url = isNew ? "/actors" : "/actors/update/" + actorID;
-    req.open("POST", url, true);
+    let url = isNew ? "/actors" : "/actors/" + actorID;
+    req.open(isNew ? "POST" : "PUT", url, true);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.send(body.slice(0,body.length-1));
 }
@@ -75,7 +75,7 @@ function deleteActor(actorID) {
             $("#row" + actorID).remove();
         }
     };
-    req.open("GET", "/actors/delete/" + actorID, true);
+    req.open("DELETE", "/actors/" + actorID, true);
     req.send();
 }
 

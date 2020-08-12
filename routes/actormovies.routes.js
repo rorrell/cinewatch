@@ -1,6 +1,5 @@
 const express = require('express')
     , mysql = require('../dbcon.js')
-    , jp = require('jsonpath')
     , router = express.Router();
 
 router.get('/', function (req, res) {

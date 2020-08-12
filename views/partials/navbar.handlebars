@@ -13,8 +13,12 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/movies">Movies</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/genres">Genres</a>
+            <li class="nav-item dropdown active">
+                <a class="nav-link dropdown-toggle" href="#" id="genreDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Genres</a>
+                <div class="dropdown-menu" aria-labelledby="genreDropdown">
+                    <a class="dropdown-item" href="/genres">Genres</a>
+                    <a class="dropdown-item" href="/genremovies">Movies for Genres</a>
+                </div>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/actors">Actors</a>

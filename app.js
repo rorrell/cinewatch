@@ -56,6 +56,7 @@ app.get('/', function (req, res, next) {
 // routes
 app.use('/genres', require('./routes/genres.routes.js'));
 app.use('/actors', require('./routes/actors.routes.js'));
+app.use('/genremovies', require('./routes/genremovies.routes.js'));
 
 // movies page
 const getAllMoviesData = (res) => {

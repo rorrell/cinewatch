@@ -63,7 +63,8 @@ router.route('/')
 
 router.route('/search/')
     .get(function (req, res, next) {
-        let queryString = "SELECT DISTINCT m.movieID, m.name, DATE_FORMAT(m.releaseDate, '%b %e %Y') AS releaseDate, m.averageCriticRating, m.synopsis FROM Movies m JOIN GenresMovies gm ON gm.movieID = m.movieID JOIN Genres g ON g.genreID = gm.genreID JOIN ActorsMovies am ON am.movieID = m.movieID JOIN Actors ac ON ac.actorID = am.actorID JOIN Awards aw ON aw.movieID = m.movieID WHERE ";
+        let queryStringFirst = "SELECT DISTINCT m.movieID, m.name, DATE_FORMAT(m.releaseDate, '%b %e %Y') AS releaseDate, m.averageCriticRating, m.synopsis FROM Movies m";
+        let queryString = " WHERE ";
         let queryVariables = ["m.name", "g.title", "ac.firstName", "ac.lastName", "aw.company", "aw.category"];
         let counter = 0;
         let firstMarker = false;
@@ -72,15 +73,58 @@ router.route('/search/')
                 if (req.query[i] != "null") {
                     queryString = queryString + "LOWER(" + queryVariables[counter] + ")" + " LIKE CONCAT('%', LOWER('" + req.query[i] + "'), '%') ";
                     firstMarker = true;
+                    switch (queryVariables[counter]) {
+                        case "g.title":
+                            queryStringFirst = queryStringFirst + " JOIN GenresMovies gm ON gm.movieID = m.movieID JOIN Genres g ON g.genreID = gm.genreID";
+                            break;
+                        case "ac.firstName":
+                            queryStringFirst = queryStringFirst + " JOIN ActorsMovies am ON am.movieID = m.movieID JOIN Actors ac ON ac.actorID = am.actorID";
+                            break;
+                        case "ac.lastName":
+                            if (req.query.actorNameFirst == "null") {
+                                queryStringFirst = queryStringFirst + " JOIN ActorsMovies am ON am.movieID = m.movieID JOIN Actors ac ON ac.actorID = am.actorID";
+                            }
+                            break;
+                        case "aw.company":
+                            queryStringFirst = queryStringFirst + " JOIN Awards aw ON aw.movieID = m.movieID";
+                            break;
+                        case "aw.category":
+                            if (req.query.awardCompany == "null") {
+                                queryStringFirst = queryStringFirst + " JOIN Awards aw ON aw.movieID = m.movieID";
+                            }
+                            break;
+                    }
                 }
                 counter += 1;
             } else {
                 if (req.query[i] != "null") {
                     queryString = queryString + "AND " + "LOWER(" + queryVariables[counter] + ")" + " LIKE CONCAT('%', LOWER('" + req.query[i] + "'), '%') ";
+                    switch (queryVariables[counter]) {
+                        case "g.title":
+                            queryStringFirst = queryStringFirst + " JOIN GenresMovies gm ON gm.movieID = m.movieID JOIN Genres g ON g.genreID = gm.genreID";
+                            break;
+                        case "ac.firstName":
+                            queryStringFirst = queryStringFirst + " JOIN ActorsMovies am ON am.movieID = m.movieID JOIN Actors ac ON ac.actorID = am.actorID";
+                            break;
+                        case "ac.lastName":
+                            if (req.query.actorNameFirst == "null") {
+                                queryStringFirst = queryStringFirst + " JOIN ActorsMovies am ON am.movieID = m.movieID JOIN Actors ac ON ac.actorID = am.actorID";
+                            }
+                            break;
+                        case "aw.company":
+                            queryStringFirst = queryStringFirst + " JOIN Awards aw ON aw.movieID = m.movieID";
+                            break;
+                        case "aw.category":
+                            if (req.query.awardCompany == "null") {
+                                queryStringFirst = queryStringFirst + " JOIN Awards aw ON aw.movieID = m.movieID";
+                            }
+                            break;
+                    }
                 }
                 counter += 1;
             }
         }
+        queryString = queryStringFirst + queryString;
         mysql.pool.query(queryString, [], function(err, result) {
             if (err) {
                 next(err);

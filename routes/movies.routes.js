@@ -86,7 +86,6 @@ router.route('/search/')
                 next(err);
                 return;
             }
-            console.log(result);
             res.send(result);
         });
     });

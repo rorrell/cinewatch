@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form id="tmAddForm">
+                <h1 class="form-legend">Link theatres and movies</h1>
+                <div class="form-group">
+                    <label>Theatre</label>
+                    <select class="form-control" id="tmTheatreName" required>
+                        <option value="" selected>Select Theatre</option>
+                    {{#data}}
+                    {{#if theatreID}}
+                        <option value="{{theatreID}}" data-name="{{name}}">{{name}} ({{city}} {{state}})</option>
+                    {{/if}}
+                    {{/data}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Movie</label>
+                    <select class="form-control" id="tmMovieName" required>
+                        <option value="" selected>Select Movie</option>
+                    {{#data2}}
+                    {{#if movieID}}
+                        <option value="{{movieID}}" data-name="{{name}}">{{name}} ({{releaseDate}})</option>
+                    {{/if}}
+                    {{/data2}}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary form-submit" id="tmSubmit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h1 class="table-legend">Theatres and movies</h1>
+            <input type="text" id="searchTM" class="form-control" placeholder="Search">
+            <br>
+            <table class="table table-light table-striped" id="tmTable">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Theatre</th>
+                    <th>Movie</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody id="tmTableBody">
+                {{#data3}}
+                    <tr id="{{theatreID}}, {{movieID}}">
+                        <td>{{tname}}</td>
+                        <td>{{mname}}</td>
+                        <td>
+                            <div class="d-flex flex-row-reverse">
+                                <button class="btn btn-secondary" onclick="deleteTM({{theatreID}}, {{movieID}})">Delete</button>
+                                <button class="btn btn-primary mx-2" onclick="updateTM({{theatreID}}, {{movieID}})">Update</button>
+                            </div>
+                        </td>
+                    </tr>
+                {{/data3}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src='/js/theatresmovies.js'></script>

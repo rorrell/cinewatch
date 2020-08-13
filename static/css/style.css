@@ -16,7 +16,11 @@ caption {
     text-align: center;
 }
 
-.row {
+.col {
+    padding-top: 50px;
+}
+
+.col-xl-6 {
     padding-top: 50px;
 }
 

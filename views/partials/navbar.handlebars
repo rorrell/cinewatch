@@ -7,8 +7,12 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/theatres">Theatres</a>
+            <li class="nav-item dropdown active">
+                <a class="nav-link dropdown-toggle" href="#" id="genreDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Theatres</a>
+                <div class="dropdown-menu" aria-labelledby="genreDropdown">
+                    <a class="dropdown-item" href="/theatres">Theatres</a>
+                    <a class="dropdown-item" href="/theatresmovies">Movies for Theatres</a>
+                </div>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/movies">Movies</a>

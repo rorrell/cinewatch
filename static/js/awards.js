@@ -198,7 +198,7 @@ function saveAward(ID) {
     if (movieID == "no-movie") {
         movieID = null;
     }
-    let awardID = String(row.getAttribute("id")).slice(3, 6);
+    let awardID = String(row.getAttribute("id")).slice(3);
     let payload = {company:null, category:null, yearAwarded:null, movieID:null, awardID:null};
     payload.company = company.textContent;
     payload.category = category.textContent;

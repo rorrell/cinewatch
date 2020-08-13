@@ -260,7 +260,7 @@ function saveMovie(ID, synButton, parent, child) {
     let name = row.firstElementChild;
     let averageCriticRating = row.firstElementChild.nextElementSibling.nextElementSibling;
     let synopsis = row.lastElementChild.previousElementSibling.firstElementChild.nextElementSibling.firstElementChild.firstElementChild.firstElementChild.nextElementSibling.firstElementChild.value;
-    let movieID = String(row.getAttribute("id")).slice(3, 6);
+    let movieID = String(row.getAttribute("id")).slice(3);
     let payload = {name:null, releaseDate:null, averageCriticRating:null, synopsis:null, movieID:null};
     payload.name = name.textContent;
     payload.releaseDate = releaseDate;
@@ -339,7 +339,7 @@ function displaySearch(data) {
     let tableBodyCopy = tableBody.cloneNode(false);
 
     for (i = 0; i < tableBody.rows.length; i++) {
-        let rowID = tableBody.children[i].getAttribute("id").slice(3, 4);
+        let rowID = tableBody.children[i].getAttribute("id").slice(3);
         loop1:
         for (j = 0; j < data.length; j++) {
             if (rowID == data[j].movieID) {

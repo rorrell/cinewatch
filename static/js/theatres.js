@@ -116,7 +116,7 @@ function saveTheatre(ID) {
     let name = row.firstElementChild;
     let city = row.firstElementChild.nextElementSibling;
     let state = row.firstElementChild.nextElementSibling.nextElementSibling;
-    let theatreID = String(row.getAttribute("id")).slice(3, 6);
+    let theatreID = String(row.getAttribute("id")).slice(3);
     let payload = {name:null, city:null, state:null, theatreID:null};
     payload.name = name.textContent;
     payload.city = city.textContent;
